@@ -1,0 +1,24 @@
+{
+  "name": "nghiavt87/debugbar",
+  "description": "Debug bar in the browser for php application",
+  "keywords": ["debug", "debugbar"],
+  "authors": [
+    {
+      "name": "Nghia Vu",
+      "email": "vunghiait@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^7.1|^8",
+    "psr/log": "^1|^2|^3",
+    "symfony/var-dumper": "^2.6|^3|^4|^5"
+  },
+  "autoload": {
+    "psr-4": {
+      "DebugBar\\": "src/DebugBar/"
+    },
+    "files": [
+      "src/DebugBar/helper.php"
+    ]
+  }
+}
