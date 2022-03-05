@@ -45,8 +45,8 @@
                 itemRenderer: function (li, stmt) {
                     $('<code />').addClass(csscls('sql')).html(stmt.key).appendTo(li);
 
-                    if (stmt.timelife) {
-                        $('<span title="Timelife" />').addClass(csscls('stmt-id')).text(stmt.timelife + ' ms').appendTo(li);
+                    if (stmt.timeLife) {
+                        $('<span title="TimeLife" />').addClass(csscls('stmt-id')).text(stmt.timeLife + ' ms').appendTo(li);
                     }
 
                     if (stmt.label) {

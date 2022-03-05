@@ -7,7 +7,7 @@ use DebugBar\Supports\Macroable;
 use DebugBar\Supports\Utils;
 
 /**
- * todo implement container to resolve class from string
+ *  implement container to resolve class from string
  */
 class Dispatcher implements DispatcherContract
 {
@@ -39,6 +39,8 @@ class Dispatcher implements DispatcherContract
      * @var array
      */
     protected $wildcardsCache = [];
+
+    private function __construct(){}
 
     /**
      * @return Dispatcher

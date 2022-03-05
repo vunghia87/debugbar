@@ -52,7 +52,7 @@ class MemcacheCollector extends DataCollector implements Renderable, AssetProvid
      */
     public function onCacheEvent()
     {
-        [$label, $key, $value, $timelife] = func_get_args();
+        [$label, $key, $value, $timeLife] = func_get_args();
 
         $item['label'] = $label;
         $item['key'] = $key;
@@ -60,12 +60,12 @@ class MemcacheCollector extends DataCollector implements Renderable, AssetProvid
             $item['value'] = $this->parseValue($value);
         }
 
-        if (!empty($timelife)) {
-            $item['timelife'] = $timelife;
+        if (!empty($timeLife)) {
+            $item['timeLife'] = $timeLife;
         }
         $item['time'] = date('Y-m-d H:i:s');
-        $this->debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS | DEBUG_BACKTRACE_PROVIDE_OBJECT, 7);
-        $this->debugBacktrace = array_slice( $this->debugBacktrace, 3);
+        $this->debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS | DEBUG_BACKTRACE_PROVIDE_OBJECT, 6);
+        $this->debugBacktrace = array_slice( $this->debugBacktrace, 2);
         $item['backtrace'] = $this->getDebugTrace();
 
         $this->data[] = $item;

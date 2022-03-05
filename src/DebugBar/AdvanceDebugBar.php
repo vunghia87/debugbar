@@ -2,6 +2,7 @@
 
 namespace DebugBar;
 
+use DebugBar\Supports\Macroable;
 use Exception;
 
 /**
@@ -20,6 +21,14 @@ use Exception;
  */
 class AdvanceDebugBar extends DebugBar
 {
+    use Macroable;
+
+    /**
+     * Singleton Pattern
+     * @var
+     */
+    private static $instance = null;
+
     /**
      * @var array
      */
@@ -39,14 +48,35 @@ class AdvanceDebugBar extends DebugBar
      */
     protected $booted = false;
 
-    public function __construct($config = [])
-    {
-        $this->config = $this->mergeConfigFrom(__DIR__ . '/Config/debugbar.php', $config);
+    private function __construct(){}
 
-        $this->run();
+    /**
+     * @return AdvanceDebugBar|null
+     */
+    public static function getInstance()
+    {
+        if (static::$instance === null) {
+            static::$instance = new static();
+            static::$instance->config = require __DIR__ . '/Config/debugbar.php';
+        }
+
+        return self::$instance;
     }
 
-    protected function run()
+    /**
+     * @param array $config
+     * @return $this
+     */
+    public function setConfig(array $config = [])
+    {
+        $this->config = array_merge($this->config, $config);
+        return $this;
+    }
+
+    /**
+     * @return void
+     */
+    public final function run()
     {
         if (!$this->isEnable() || $this->inExceptArray($_REQUEST)) {
             return;
@@ -81,7 +111,8 @@ class AdvanceDebugBar extends DebugBar
         }
 
         if ($this->shouldCollect('messages', true)) {
-            $this->addCollector(new \DebugBar\DataCollector\MessagesCollector());
+            $shouldTrace = $this->config['options']['messages']['shouldTrace'] ?? true;
+            $this->addCollector(new \DebugBar\DataCollector\MessagesCollector('messages', $shouldTrace));
         }
 
         if ($this->shouldCollect('time', true)) {

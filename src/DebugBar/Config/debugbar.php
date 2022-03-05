@@ -80,5 +80,8 @@ return [
         'memcache' => [
             'shouldValue' => false
         ],
+        'messages' => [
+            'shouldTrace' => false
+        ],
     ],
 ];

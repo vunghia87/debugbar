@@ -348,6 +348,49 @@ if (typeof(PhpDebugBar) == 'undefined') {
                     val.addClass(csscls(value.label));
                     $('<span />').addClass(csscls('label')).text(value.label).prependTo(li);
                 }
+                if (value.backtrace && value.backtrace.length) {
+                    var table = $('<table></table>').addClass(csscls('params')).hide().appendTo(li);
+
+                    li.css('cursor', 'pointer').click(function () {
+                        if (table.is(':visible')) {
+                            table.hide();
+                        } else {
+                            table.show();
+                        }
+                    });
+                    table.append(function () {
+                        var $td = $('<td />').css('padding','2px').addClass(csscls('value'));
+
+                        var $span = $('<span />').addClass('phpdebugbar-text-muted');
+
+                        var $backtrace = new PhpDebugBar.Widgets.ListWidget({
+                            itemRenderer: function (li, source) {
+                                var $parts = [
+                                    $span.clone().text(source.index + '.'),
+                                    '&nbsp;',
+                                ];
+
+                                if (source.namespace) {
+                                    $parts.push(source.namespace + '::');
+                                }
+
+                                $parts.push(source.name);
+                                $parts.push($span.clone().text(':' + source.line));
+
+                                li.append($parts).removeClass(csscls('list-item')).addClass(csscls('table-list-item'));
+                            }
+                        });
+
+                        $backtrace.set('data', value.backtrace);
+
+                        $backtrace.$el
+                            .removeClass(csscls('list'))
+                            .addClass(csscls('table-list'))
+                            .appendTo($td);
+
+                        return $('<tr />').append($td, $backtrace);
+                    })
+                }
             }});
 
             this.$list.$el.appendTo(this.$el);

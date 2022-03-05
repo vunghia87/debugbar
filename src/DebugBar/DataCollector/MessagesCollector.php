@@ -10,6 +10,7 @@
 
 namespace DebugBar\DataCollector;
 
+use DebugBar\Supports\DebugTraceFrame;
 use Psr\Log\AbstractLogger;
 use DebugBar\DataFormatter\DataFormatterInterface;
 use DebugBar\DataFormatter\DebugBarVarDumper;
@@ -19,6 +20,8 @@ use DebugBar\DataFormatter\DebugBarVarDumper;
  */
 class MessagesCollector extends AbstractLogger implements DataCollectorInterface, MessagesAggregateInterface, Renderable, AssetProvider
 {
+    use DebugTraceFrame;
+
     protected $name;
 
     protected $messages = array();
@@ -33,12 +36,15 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     // may support yet - so return false by default for now.
     protected $useHtmlVarDumper = false;
 
+    protected $shouldTrace = false;
+
     /**
      * @param string $name
      */
-    public function __construct($name = 'messages')
+    public function __construct($name = 'messages', $shouldTrace = false)
     {
         $this->name = $name;
+        $this->shouldTrace = $shouldTrace;
     }
 
     /**
@@ -134,13 +140,21 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
             }
             $isString = false;
         }
-        $this->messages[] = array(
+        $item = array(
             'message' => $messageText,
             'message_html' => $messageHtml,
             'is_string' => $isString,
             'label' => $label,
             'time' => microtime(true)
         );
+
+        if ($this->shouldTrace) {
+            $this->debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS | DEBUG_BACKTRACE_PROVIDE_OBJECT, 6);
+            $this->debugBacktrace = array_slice($this->debugBacktrace, 2);
+            $item['backtrace'] = $this->getDebugTrace();
+        }
+
+        $this->messages[] = $item;
     }
 
     /**
