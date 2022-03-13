@@ -1,14 +1,13 @@
 (function ($) {
 
     var csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
-
     /**
      * Widget for the displaying memcache
      *
      * Options:
      *  - data
      */
-    var MemcacheWidget = PhpDebugBar.Widgets.MemcacheWidget = PhpDebugBar.Widget.extend({
+    var CommandWidget = PhpDebugBar.Widgets.CommandWidget = PhpDebugBar.Widget.extend({
 
         className: csscls('sqlqueries'),
 
@@ -43,15 +42,15 @@
 
             this.$list = new PhpDebugBar.Widgets.ListWidget({
                 itemRenderer: function (li, stmt) {
-                    $('<code />').addClass(csscls('sql')).html(stmt.key).appendTo(li);
+                    $('<code />').addClass(csscls('sql')).html(stmt.arguments).appendTo(li);
 
                     if (stmt.timeLife) {
                         $('<span title="TimeLife" />').addClass(csscls('stmt-id')).text(stmt.timeLife + ' ms').appendTo(li);
                     }
 
-                    if (stmt.label) {
-                        $('<span title="Type" />').addClass(csscls('database')).text(stmt.label).appendTo(li);
-                        li.attr("connection", stmt.label);
+                    if (stmt.command) {
+                        $('<span title="Type" />').addClass(csscls('database')).text(stmt.command).appendTo(li);
+                        li.attr("connection", stmt.command);
                     }
 
                     if (stmt.time) {
@@ -77,11 +76,12 @@
                         }
                     });
 
-                    if (stmt.value && stmt.value.length) {
+
+                    if (stmt.options) {
                         table.append(function () {
                             var $value = $('<td colspan="2"/>').css('text-align', 'left');
 
-                            var v = stmt.value;
+                            var v = stmt.options;
                             if (v && v.length > 100) {
                                 v = v.substr(0, 100) + "...";
                             }
@@ -97,7 +97,6 @@
                             });
 
                             var $widget = new PhpDebugBar.Widgets.ListWidget();
-
                             $widget.$el
                                 .removeClass(csscls('list'))
                                 .addClass(csscls('table-list'))
@@ -164,19 +163,19 @@
                     return false;
                 }
                 this.set({exclude: [], search: ''});
-                this.$toolbar.find('.' + csscls('.filter')).remove();
+                //this.$toolbar.find('.' + csscls('.filter')).remove();
 
                 var filters = [], self = this;
                 for (var i = 0; i < data.length; i++) {
-                    if (!data[i].label || $.inArray(data[i].label, filters) > -1) {
+                    if (!data[i].command || $.inArray(data[i].command, filters) > -1) {
                         continue;
                     }
-                    filters.push(data[i].label);
+                    filters.push(data[i].command);
 
                     $('<a />')
                         .addClass(csscls('filter'))
-                        .text(data[i].label)
-                        .attr('rel', data[i].label)
+                        .text(data[i].command)
+                        .attr('rel', data[i].command)
                         .on('click', function() { self.onFilterClick(this); })
                         .appendTo(this.$toolbar);
                 }
@@ -194,9 +193,9 @@
                 }
 
                 for (var i = 0; i < data.length; i++) {
-                    var message = caseless ? data[i].key.toLowerCase() : data[i].key;
+                    var message = caseless ? data[i].options.toLowerCase() : data[i].options;
 
-                    if ((!data[i].label || $.inArray(data[i].label, exclude) === -1) && (!search || message.indexOf(search) > -1)) {
+                    if ((!data[i].command || $.inArray(data[i].command, exclude) === -1) && (!search || message.indexOf(search) > -1)) {
                         fdata.push(data[i]);
                     }
                 }

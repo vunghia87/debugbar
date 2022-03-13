@@ -141,6 +141,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
             'code' => $e->getCode(),
             'file' => $filePath,
             'line' => $e->getLine(),
+            'start' => $start ?? null,
             'stack_trace' => $e->getTraceAsString(),
             'stack_trace_html' => $traceHtml,
             'surrounding_lines' => $lines,

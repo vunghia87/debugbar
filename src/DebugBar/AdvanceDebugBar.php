@@ -99,6 +99,8 @@ class AdvanceDebugBar extends DebugBar
         /** @var \DebugBar\AdvanceDebugBar $debugbar */
         $debugbar = $this;
 
+        $events = \DebugBar\Events\Dispatcher::getInstance();
+
         // Set custom error handler
         if (isset($this->config['error_handler']) && $this->config['error_handler'] == true) {
             set_exception_handler([$this, 'handleError']);
@@ -142,7 +144,7 @@ class AdvanceDebugBar extends DebugBar
                 $this->addCollector($cacheCollector);
             } catch (\Exception $e) {
                 $this->addThrowable(
-                    new Exception('Cannot add AuthCollector to Debugbar: ' . $e->getMessage(), $e->getCode(), $e)
+                    new Exception('Cannot add AuthCollector to DebugBar: ' . $e->getMessage(), $e->getCode(), $e)
                 );
             }
         }
@@ -152,12 +154,22 @@ class AdvanceDebugBar extends DebugBar
                 $shouldValue = $this->config['options']['memcache']['shouldValue'] ?? false;
                 $cacheCollector = new \DebugBar\DataCollector\MemcacheCollector($shouldValue);
                 $this->addCollector($cacheCollector);
-
-                $events = \DebugBar\Events\Dispatcher::getInstance();
                 $events->subscribe($cacheCollector);
             } catch (\Exception $e) {
                 $this->addThrowable(
-                    new Exception('Cannot add CacheCollector to Debugbar: ' . $e->getMessage(), $e->getCode(), $e)
+                    new Exception('Cannot add CacheCollector to DebugBar: ' . $e->getMessage(), $e->getCode(), $e)
+                );
+            }
+        }
+
+        if ($this->shouldCollect('command', false)) {
+            try {
+                $commandCollector = new \DebugBar\DataCollector\CommandCollector();
+                $this->addCollector($commandCollector);
+                $events->subscribe($commandCollector);
+            } catch (\Exception $e) {
+                $this->addThrowable(
+                    new Exception('Cannot add CommandCollector to DebugBar: ' . $e->getMessage(), $e->getCode(), $e)
                 );
             }
         }
@@ -251,7 +263,7 @@ class AdvanceDebugBar extends DebugBar
     {
         echo $exception->getMessage() . " " . $exception->getFile() . " Line: " . $exception->getLine() . " Trace: " . $exception->getTraceAsString();
 
-        error_log($exception->getMessage() . " " . $exception->getFile() . " Line: " . $exception->getLine() . " Trace: " . $exception->getTraceAsString());
+        error_log($exception);
 
         if ($this->hasCollector('exceptions')) {
             $collector = $this->getCollector('exceptions');
@@ -275,7 +287,7 @@ class AdvanceDebugBar extends DebugBar
 
             $uri = $request['REQUEST_URI'] ?? '';
             if (strpos('*', $except)) {
-                return str_contains(str_replace('*', '', $except), $uri);
+                return strpos(str_replace('*', '', $except), $uri);
             }
 
             return $uri == $except;

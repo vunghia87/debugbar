@@ -14,22 +14,14 @@ use DebugBar\Events\Dispatcher;
 use DebugBar\Supports\DebugTraceFrame;
 
 /**
- * Collects [key, value] of cache
+ * Collects [class, params] of command
  */
-class MemcacheCollector extends DataCollector implements Renderable, AssetProvider
+class CommandCollector extends DataCollector implements Renderable, AssetProvider
 {
     use DebugTraceFrame;
 
-    protected $shouldValue = false;
-
-    public function __construct(bool $shouldValue)
-    {
-        $this->shouldValue = $shouldValue;
-    }
-
     protected $classMap = [
-        'cache.set' => 'set',
-        'cache.get' => 'get'
+        'command' => 'command',
     ];
 
     protected $data = [];
@@ -41,26 +33,29 @@ class MemcacheCollector extends DataCollector implements Renderable, AssetProvid
     {
         return [
             'count' => count($this->data),
-            'memcaches' => $this->data
+            'commands' => $this->data
         ];
     }
 
     /**
      * @return void
      */
-    public function onCacheEvent()
+    public function onCommandEvent()
     {
-        [$label, $key, $value, $timeLife] = func_get_args();
+        [$command, $options, $arguments, $callable, $params] = func_get_args();
 
-        $item['label'] = $label;
-        $item['key'] = $key;
-        if ($this->shouldValue) {
-            $item['value'] = $this->parseValue($value);
+        $item['command'] = $command;
+        $item['options'] = $options;
+        $item['arguments'] = $arguments;
+
+        if (!empty($callable)) {
+            $item['callable'] = $callable;
         }
 
-        if (!empty($timeLife)) {
-            $item['timeLife'] = $timeLife;
+        if (!empty($params)) {
+            $item['params'] = $params;
         }
+
         $item['time'] = date('Y-m-d H:i:s');
         $this->debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS | DEBUG_BACKTRACE_PROVIDE_OBJECT, 6);
         $this->debugBacktrace = array_slice( $this->debugBacktrace, 2);
@@ -70,26 +65,13 @@ class MemcacheCollector extends DataCollector implements Renderable, AssetProvid
     }
 
     /**
-     * @param mixed $value
-     * @return void
-     */
-    protected function parseValue($value)
-    {
-        if (is_object($value)) {
-            return get_class($value);
-        }
-
-        return $this->getDataFormatter()->formatVar($value);
-    }
-
-    /**
      * @param Dispatcher $dispatcher
      * @return void
      */
     public function subscribe(Dispatcher $dispatcher)
     {
         foreach ($this->classMap as $eventClass => $type) {
-            $dispatcher->listen($eventClass, [$this, 'onCacheEvent']);
+            $dispatcher->listen($eventClass, [$this, 'onCommandEvent']);
         }
     }
 
@@ -98,7 +80,7 @@ class MemcacheCollector extends DataCollector implements Renderable, AssetProvid
      */
     public function getName()
     {
-        return 'memcache';
+        return 'command';
     }
 
     /**
@@ -107,14 +89,14 @@ class MemcacheCollector extends DataCollector implements Renderable, AssetProvid
     public function getWidgets()
     {
         return array(
-            "memcache" => array(
+            "command" => array(
                 "icon" => "clipboard",
-                "widget" => "PhpDebugBar.Widgets.MemcacheWidget",
-                "map" => "memcache.memcaches",
+                "widget" => "PhpDebugBar.Widgets.CommandWidget",
+                "map" => "command.commands",
                 "default" => "{}"
             ),
-            "memcache:badge" => array(
-                "map" => "memcache.count",
+            "command:badge" => array(
+                "map" => "command.count",
                 "default" => 0
             )
         );
@@ -127,7 +109,7 @@ class MemcacheCollector extends DataCollector implements Renderable, AssetProvid
     {
         return array(
             'css' => 'widgets/sqlqueries/widget.css',
-            'js' => 'widgets/memcaches/widget.js'
+            'js' => 'widgets/commands/widget.js'
         );
     }
 }

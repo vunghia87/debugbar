@@ -592,7 +592,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                     $('<span />').addClass(csscls('type')).text(e.type).appendTo(li);
                 }
                 if (e.surrounding_lines) {
-                    var pre = createCodeBlock(e.surrounding_lines.join(""), 'php').addClass(csscls('file')).appendTo(li);
+                    var pre = createCodeBlock(e.surrounding_lines.join(""), 'php', e.start, e.line).addClass(csscls('file')).appendTo(li);
                     if (!e.stack_trace_html) {
                         // This click event makes the var-dumper hard to use.
                         li.click(function () {
@@ -605,8 +605,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                     }
                 }
                 if (e.stack_trace_html) {
-                    var $trace = $('<span />').addClass(csscls('filename')).html(e.stack_trace_html);
-                    $trace.appendTo(li);
+                    $('<span />').addClass(csscls('filename')).html(e.stack_trace_html).appendTo(li);
                 } else if (e.stack_trace) {
                     e.stack_trace.split("\n").forEach(function (trace) {
                         var $traceLine = $('<div />');

@@ -64,7 +64,8 @@ return [
         'db'              => false, // Show database (PDO) queries and bindings
         'response'        => false, // Show response by ob_start
         'memcache'        => false, // Show cache by memcache
-        'auth'            => true,  // get Global auth from session by Partner
+        'auth'            => false, // get Global auth from session by Partner
+        'command'         => true,  // get command execution from binary php
     ],
 
     /*
