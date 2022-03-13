@@ -164,7 +164,7 @@
                     return false;
                 }
                 this.set({exclude: [], search: ''});
-                this.$toolbar.find('.' + csscls('.filter')).remove();
+                this.$toolbar.find('.' + csscls('filter')).remove();
 
                 var filters = [], self = this;
                 for (var i = 0; i < data.length; i++) {

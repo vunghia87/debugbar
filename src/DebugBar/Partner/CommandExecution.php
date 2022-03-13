@@ -1,5 +1,9 @@
 <?php
 
+namespace BeSmartee\Utils;
+
+use BeSmartee\Utils\Validation\ValidationInterface;
+
 class CommandExecution
 {
     private $command;

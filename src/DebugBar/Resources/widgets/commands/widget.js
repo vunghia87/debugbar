@@ -44,10 +44,6 @@
                 itemRenderer: function (li, stmt) {
                     $('<code />').addClass(csscls('sql')).html(stmt.arguments).appendTo(li);
 
-                    if (stmt.timeLife) {
-                        $('<span title="TimeLife" />').addClass(csscls('stmt-id')).text(stmt.timeLife + ' ms').appendTo(li);
-                    }
-
                     if (stmt.command) {
                         $('<span title="Type" />').addClass(csscls('database')).text(stmt.command).appendTo(li);
                         li.attr("connection", stmt.command);
@@ -90,7 +86,7 @@
                                 if ($value.hasClass(csscls('pretty'))) {
                                     $value.text(v).removeClass(csscls('pretty'));
                                 } else {
-                                    prettyVal = prettyVal || PhpDebugBar.Widgets.createCodeBlock(stmt.value);
+                                    prettyVal = prettyVal || PhpDebugBar.Widgets.createCodeBlock(stmt.options);
                                     $value.addClass(csscls('pretty')).empty().append(prettyVal);
                                 }
                                 e.stopPropagation()
@@ -163,7 +159,7 @@
                     return false;
                 }
                 this.set({exclude: [], search: ''});
-                //this.$toolbar.find('.' + csscls('.filter')).remove();
+                this.$toolbar.find('.' + csscls('filter')).remove();
 
                 var filters = [], self = this;
                 for (var i = 0; i < data.length; i++) {
