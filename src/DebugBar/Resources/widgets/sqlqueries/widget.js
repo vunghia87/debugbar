@@ -241,7 +241,7 @@
 
                 var filters = ['select', 'insert', 'update', 'delete', 'join', 'count', 'like', 'having', 'group by', 'order by', 'lender_configurations'];
 
-                this.$search.find(csscls('filter')).remove();
+                this.$search.find('.' + csscls('filter')).remove();
 
                 for (var i = 0; i < filters.length; i++) {
                     $('<a />')

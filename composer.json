@@ -2,6 +2,8 @@
   "name": "nghiavt87/debugbar",
   "description": "Debug bar in the browser for php application",
   "keywords": ["debug", "debugbar"],
+  "type": "library",
+  "license": "MIT",
   "authors": [
     {
       "name": "Nghia Vu",
@@ -20,5 +22,10 @@
     "files": [
       "src/DebugBar/helper.php"
     ]
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "master"
+    }
   }
 }
