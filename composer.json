@@ -23,9 +23,6 @@
       "src/DebugBar/helper.php"
     ]
   },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "master"
-    }
-  }
+  "minimum-stability": "master",
+  "prefer-stable": true
 }
