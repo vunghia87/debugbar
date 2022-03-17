@@ -1,5 +1,5 @@
 {
-  "name": "nghiavt87/debugbar",
+  "name": "vunghia87/debugbar",
   "description": "Debug bar in the browser for php application",
   "keywords": ["debug", "debugbar"],
   "type": "library",
@@ -22,7 +22,5 @@
     "files": [
       "src/DebugBar/helper.php"
     ]
-  },
-  "minimum-stability": "master",
-  "prefer-stable": true
+  }
 }
