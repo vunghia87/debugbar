@@ -6,11 +6,28 @@ trait DebugTraceFrame
 {
     protected $debugBacktrace;
 
-    protected $backtraceExcludePaths = [
-//        '/vendor/laravel/framework/src/Illuminate/Support',
-//        '/vendor/laravel/framework/src/Illuminate/Database',
-//        '/vendor/laravel/framework/src/Illuminate/Events',
+    protected $backtraceExcludePaths = [];
+
+    protected $editors = [
+        'sublime' => 'subl://open?url=file://%file&line=%line',
+        'textmate' => 'txmt://open?url=file://%file&line=%line',
+        'emacs' => 'emacs://open?url=file://%file&line=%line',
+        'macvim' => 'mvim://open/?url=file://%file&line=%line',
+        'phpstorm' => 'phpstorm://open?file=%file&line=%line',
+        'idea' => 'idea://open?file=%file&line=%line',
+        'vscode' => 'vscode://file/%file:%line',
+        'vscode-insiders' => 'vscode-insiders://file/%file:%line',
+        'vscode-remote' => 'vscode://vscode-remote/%file:%line',
+        'vscode-insiders-remote' => 'vscode-insiders://vscode-remote/%file:%line',
+        'vscodium' => 'vscodium://file/%file:%line',
+        'nova' => 'nova://core/open/file?filename=%file&line=%line',
+        'xdebug' => 'xdebug://%file@%line',
+        'atom' => 'atom://core/open/file?filename=%file&line=%line',
+        'espresso' => 'x-espresso://open?filepath=%file&lines=%line',
+        'netbeans' => 'netbeans://open/?f=%file:%line',
     ];
+
+    protected $editor = 'phpstorm';
     
     /**
      * @param $debugBackTrace
@@ -50,28 +67,30 @@ trait DebugTraceFrame
     /**
      * Parse a trace element from the backtrace stack.
      *
-     * @param  int    $index
-     * @param  array  $trace
+     * @param int $index
+     * @param array $trace
      * @return object|bool
      */
-    protected function parseTrace($index, array $trace)
+    public function parseTrace(int $index, array $trace)
     {
-        $frame = (object) [
+        $frame = (object)[
             'index' => $index,
             'namespace' => null,
             'name' => null,
             'line' => isset($trace['line']) ? $trace['line'] : '?',
         ];
 
-        if (
-            isset($trace['class']) &&
-            isset($trace['file']) &&
-            !$this->fileIsInExcludedPath($trace['file'])
-        ) {
+        if (isset($trace['file']) && !$this->fileIsInExcludedPath($trace['file'])) {
             $file = $trace['file'];
-
-            $frame->name = $this->normalizeFilename($file);
-
+            $frame->name = $file;
+            //instance debugBar
+            $config = debugbar()->getConfig();
+            if (!isset($config['remote_sites_path']) && !isset($config['local_sites_path'])) {
+                return $frame;
+            }
+            $filePath = trim(str_replace(trim($config['remote_sites_path'],'/'), '', $file),'/');
+            $folderPath = trim($config['local_sites_path'],'\\') .'\\'. str_replace('/', '\\', $filePath);
+            $frame->editorHref = str_replace(['%file', '%line'], [$folderPath, $frame->line], $this->editors[$this->editor]);
             return $frame;
         }
 
@@ -95,40 +114,5 @@ trait DebugTraceFrame
         }
 
         return false;
-    }
-
-    /**
-     * Shorten the path by removing the relative links and base dir
-     *
-     * @param string $path
-     * @return string
-     */
-    protected function normalizeFilename($path)
-    {
-        if (file_exists($path)) {
-            $path = realpath($path);
-        }
-
-        return str_replace( $this->getHtmlRootFolder(), '', $path);
-    }
-
-    /**
-     * @param string $root
-     * @return array|string|string[]|null
-     */
-    protected function getHtmlRootFolder(string $root = '/var/www/') {
-        $ret = str_replace(' ', '', $_SERVER['DOCUMENT_ROOT']);
-        $ret = rtrim($ret, '/') . '/';
-
-        // -- if doesn't contain root path, find using this file's loc. path --
-        if (!preg_match("#".$root."#", $ret)) {
-            $root = rtrim($root, '/') . '/';
-            $root_arr = explode("/", $root);
-            $pwd_arr = explode("/", getcwd());
-            $ret = $root . $pwd_arr[count($root_arr) - 1];
-        }
-
-        $dir = (preg_match("#".$root."#", $ret)) ? rtrim($ret, '/') . '/' : null;
-        return str_replace('public_html/', '', $dir);
     }
 }

@@ -323,6 +323,14 @@ class AdvanceDebugBar extends DebugBar
     }
 
     /**
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
      * @param DebugBar $debugbar
      */
     protected function selectStorage(DebugBar $debugbar)

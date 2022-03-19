@@ -33,7 +33,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
 
     // The HTML var dumper requires debug bar users to support the new inline assets, which not all
     // may support yet - so return false by default for now.
-    protected $useHtmlVarDumper = false;
+    protected $useHtmlVarDumper = true;
 
     protected $shouldTrace = false;
 

@@ -10,6 +10,7 @@
 
 namespace DebugBar\DataCollector;
 
+use DebugBar\Supports\DebugTraceFrame;
 use Exception;
 
 /**
@@ -17,6 +18,7 @@ use Exception;
  */
 class ExceptionsCollector extends DataCollector implements Renderable
 {
+    use DebugTraceFrame;
     protected $exceptions = array();
     protected $chainExceptions = false;
 
@@ -101,6 +103,8 @@ class ExceptionsCollector extends DataCollector implements Renderable
             $lines = array("Cannot open the file ($filePath) in which the exception occurred ");
         }
 
+        $frame = $this->parseTrace(0, ['file' => $e->getFile(), 'line' => $e->getLine()]);
+
         return array(
             'type' => get_class($e),
             'message' => $e->getMessage(),
@@ -110,7 +114,8 @@ class ExceptionsCollector extends DataCollector implements Renderable
             'start' => $start ?? null,
             'stack_trace' => $e->getTraceAsString(),
             'surrounding_lines' => $lines,
-            'xdebug_link' => $this->getXdebugLink($filePath, $e->getLine())
+            //'xdebug_link' => $this->getXdebugLink($filePath, $e->getLine()),
+            'editor_href' => $frame->editorHref ?? false
         );
     }
 

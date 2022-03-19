@@ -59,7 +59,8 @@
 
                     var table = $('<table></table>').appendTo(li).show();
                     table.append(function () {
-                        var $value = $('<td />').html(stmt.value);
+                        //var prettyVal = PhpDebugBar.Widgets.createCodeBlock(stmt.value, 'php');
+                        var $value = $('<td />').append(stmt.value);
                         return $('<tr />').append($value);
                     });
                 }

@@ -82,53 +82,18 @@
                         })
                         .appendTo(li);
 
-                    var table = $('<table><tr><th colspan="2">Metadata</th></tr></table>').addClass(csscls('params')).appendTo(li);
+                    var table = $('<table></table>').addClass(csscls('params')).appendTo(li);
 
-                    li.css('cursor', 'pointer').click(function () {
-                        if (table.is(':visible')) {
-                            table.hide();
-                        } else {
-                            table.show();
+                    li.css('cursor', 'pointer').click(function (e) {
+                        if (!$(e.target).is("a")) {
+                            if (table.is(':visible')) {
+                                table.hide();
+                            } else {
+                                table.show();
+                            }
+                            self.onToggleCode($(this), stmt.sql);
                         }
-                        self.onToggleCode($(this), stmt.sql);
                     });
-
-                    if (stmt.backtrace && stmt.backtrace.length) {
-                        table.append(function () {
-                            var icon = 'list-ul';
-                            var $icon = '<i class="phpdebugbar-fa phpdebugbar-fa-' + icon + ' phpdebugbar-text-muted"></i>';
-                            var $name = $('<td />').addClass(csscls('name')).html('Backtrace ' + $icon);
-                            var $value = $('<td />').addClass(csscls('value'));
-                            var $span = $('<span />').addClass('phpdebugbar-text-muted');
-
-                            var $backtrace = new PhpDebugBar.Widgets.ListWidget({
-                                itemRenderer: function (li, source) {
-                                    var $parts = [
-                                        $span.clone().text(source.index + '.'),
-                                        '&nbsp;',
-                                    ];
-
-                                    if (source.namespace) {
-                                        $parts.push(source.namespace + '::');
-                                    }
-
-                                    $parts.push(source.name);
-                                    $parts.push($span.clone().text(':' + source.line));
-
-                                    li.append($parts).removeClass(csscls('list-item')).addClass(csscls('table-list-item'));
-                                }
-                            });
-
-                            $backtrace.set('data', stmt.backtrace);
-
-                            $backtrace.$el
-                                .removeClass(csscls('list'))
-                                .addClass(csscls('table-list'))
-                                .appendTo($value);
-
-                            return $('<tr />').append($name, $value);
-                        });
-                    }
 
                     if (stmt.hints && stmt.hints.length) {
                         table.append(function () {
@@ -171,6 +136,47 @@
                             var $bindings = new PhpDebugBar.Widgets.ListWidget();
 
                             $bindings.$el
+                                .removeClass(csscls('list'))
+                                .addClass(csscls('table-list'))
+                                .appendTo($value);
+
+                            return $('<tr />').append($name, $value);
+                        });
+                    }
+
+                    if (stmt.backtrace && stmt.backtrace.length) {
+                        table.append(function () {
+                            var icon = 'list-ul';
+                            var $icon = '<i class="phpdebugbar-fa phpdebugbar-fa-' + icon + ' phpdebugbar-text-muted"></i>';
+                            var $name = $('<td />').addClass(csscls('name')).html('Backtrace ' + $icon);
+                            var $value = $('<td />').addClass(csscls('value'));
+                            var $span = $('<span />').addClass('phpdebugbar-text-muted');
+
+                            var $backtrace = new PhpDebugBar.Widgets.ListWidget({
+                                itemRenderer: function (li, source) {
+                                    var $parts = [
+                                        $span.clone().text(source.index + '.'),
+                                        '&nbsp;',
+                                    ];
+
+                                    if (source.namespace) {
+                                        $parts.push(source.namespace + '::');
+                                    }
+
+                                    $parts.push(source.name);
+                                    $parts.push($span.clone().text(':' + source.line));
+                                    $parts.push('&nbsp;');
+                                    if (source.editorHref) {
+                                        $parts.push($('<a target="_blank" href="' + source.editorHref + '"></a>').addClass(csscls('editor-link')));
+                                    }
+
+                                    li.append($parts).removeClass(csscls('list-item')).addClass(csscls('table-list-item'));
+                                }
+                            });
+
+                            $backtrace.set('data', stmt.backtrace);
+
+                            $backtrace.$el
                                 .removeClass(csscls('list'))
                                 .addClass(csscls('table-list'))
                                 .appendTo($value);

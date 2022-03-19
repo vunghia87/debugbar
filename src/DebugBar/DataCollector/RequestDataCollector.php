@@ -174,25 +174,26 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
             $path = realpath($path);
         }
 
-        return str_replace( $this->getHtmlRootFolder(), '', $path);
+        return str_replace($this->getHtmlRootFolder(), '', $path);
     }
 
     /**
      * @param string $root
      * @return array|string|string[]|null
      */
-    protected function getHtmlRootFolder(string $root = '/var/www/') {
+    protected function getHtmlRootFolder(string $root = '/var/www/')
+    {
         $ret = str_replace(' ', '', $_SERVER['DOCUMENT_ROOT'] ?? '');
         $ret = rtrim($ret, '/') . '/';
 
-        if (!preg_match("#".$root."#", $ret)) {
+        if (!preg_match("#" . $root . "#", $ret)) {
             $root = rtrim($root, '/') . '/';
             $root_arr = explode("/", $root);
             $pwd_arr = explode("/", getcwd());
             $ret = $root . $pwd_arr[count($root_arr) - 1];
         }
 
-        $dir = (preg_match("#".$root."#", $ret)) ? rtrim($ret, '/') . '/' : null;
+        $dir = (preg_match("#" . $root . "#", $ret)) ? rtrim($ret, '/') . '/' : null;
         return str_replace('public_html/', '', $dir);
     }
 
@@ -207,7 +208,8 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
     /**
      * @return array
      */
-    public function getAssets() {
+    public function getAssets()
+    {
         $dumperAsset = $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : array();
         return array_merge(['js' => 'widgets/requests/widget.js'], $dumperAsset);
     }

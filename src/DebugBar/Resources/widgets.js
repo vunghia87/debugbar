@@ -330,12 +330,14 @@ if (typeof(PhpDebugBar) == 'undefined') {
                         if (!value.is_string) {
                             prettyVal = null;
                         }
-                        li.css('cursor', 'pointer').click(function () {
-                            if (val.hasClass(csscls('pretty'))) {
-                                val.text(m).removeClass(csscls('pretty'));
-                            } else {
-                                prettyVal = prettyVal || createCodeBlock(value.message, 'php');
-                                val.addClass(csscls('pretty')).empty().append(prettyVal);
+                        li.css('cursor', 'pointer').click(function (e) {
+                            if (!$(e.target).is("a")) {
+                                if (val.hasClass(csscls('pretty'))) {
+                                    val.text(m).removeClass(csscls('pretty'));
+                                } else {
+                                    prettyVal = prettyVal || createCodeBlock(value.message, 'php');
+                                    val.addClass(csscls('pretty')).empty().append(prettyVal);
+                                }
                             }
                         });
                     }
@@ -348,16 +350,10 @@ if (typeof(PhpDebugBar) == 'undefined') {
                     val.addClass(csscls(value.label));
                     $('<span />').addClass(csscls('label')).text(value.label).prependTo(li);
                 }
-                if (value.backtrace && value.backtrace.length) {
-                    var table = $('<table></table>').addClass(csscls('params')).hide().appendTo(li);
 
-                    li.css('cursor', 'pointer').click(function () {
-                        if (table.is(':visible')) {
-                            table.hide();
-                        } else {
-                            table.show();
-                        }
-                    });
+                if (value.backtrace && value.backtrace.length) {
+                    var table = $('<table></table>').addClass(csscls('params')).show().appendTo(li);
+
                     table.append(function () {
                         var $td = $('<td />').css('padding','2px').addClass(csscls('value'));
 
@@ -376,6 +372,10 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
                                 $parts.push(source.name);
                                 $parts.push($span.clone().text(':' + source.line));
+                                $parts.push('&nbsp;');
+                                if (source.editorHref) {
+                                    $parts.push($('<a target="_blank" href="' + source.editorHref + '"></a>').addClass(csscls('editor-link')));
+                                }
 
                                 li.append($parts).removeClass(csscls('list-item')).addClass(csscls('table-list-item'));
                             }
@@ -574,9 +574,14 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
         render: function() {
             this.$list = new ListWidget({ itemRenderer: function(li, e) {
-                $('<span />').addClass(csscls('message')).text(e.message).appendTo(li);
+                $('<span />').addClass(csscls('message')).text(e.message + " (" + e.code + ")").appendTo(li);
                 if (e.file) {
-                    var header = $('<span />').addClass(csscls('filename')).text(e.file + "#" + e.line);
+                    var header = $('<span />').addClass(csscls('filename')).text(e.file + ":" + e.line);
+
+                    if (e.editor_href) {
+                        $('<a target="_blank" href="' + e.editor_href + '"></a>').addClass(csscls('editor-link')).appendTo(header);
+                    }
+
                     if (e.xdebug_link) {
                         if (e.xdebug_link.ajax) {
                             $('<a title="' + e.xdebug_link.url + '"></a>').on('click', function () {
@@ -594,11 +599,13 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 if (e.surrounding_lines) {
                     var pre = createCodeBlock(e.surrounding_lines.join(""), 'php', e.start, e.line).addClass(csscls('file')).appendTo(li);
                     if (!e.stack_trace_html) {
-                        li.click(function () {
-                            if (pre.is(':visible')) {
-                                pre.hide();
-                            } else {
-                                pre.show();
+                        li.click(function (e) {
+                            if (!$(e.target).is("a")) {
+                                if (pre.is(':visible')) {
+                                    pre.hide();
+                                } else {
+                                    pre.show();
+                                }
                             }
                         });
                     }
@@ -619,9 +626,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                     this.$list.$el.children().first().find(csscls('.file')).show();
                 }
             });
-
         }
-
     });
 
 
