@@ -20,7 +20,7 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
     protected $useHtmlVarDumper = true;
 
     /**
-     * Sets a flag indicating whether the Symfony HtmlDumper will be used to dump variables for
+     * Sets a flag indicating whether the HtmlDumper will be used to dump variables for
      * rich variable rendering.
      *
      * @param bool $value
@@ -33,7 +33,7 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
     }
 
     /**
-     * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
+     * Indicates whether the HtmlDumper will be used to dump variables for rich variable
      * rendering.
      *
      * @return mixed

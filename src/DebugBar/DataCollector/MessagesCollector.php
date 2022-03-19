@@ -95,7 +95,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     }
 
     /**
-     * Sets a flag indicating whether the Symfony HtmlDumper will be used to dump variables for
+     * Sets a flag indicating whether the HtmlDumper will be used to dump variables for
      * rich variable rendering.  Be sure to set this flag before logging any messages for the
      * first time.
      *
@@ -109,7 +109,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     }
 
     /**
-     * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
+     * Indicates whether the HtmlDumper will be used to dump variables for rich variable
      * rendering.
      *
      * @return mixed

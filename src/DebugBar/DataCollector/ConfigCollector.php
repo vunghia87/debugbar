@@ -24,7 +24,7 @@ class ConfigCollector extends DataCollector implements Renderable, AssetProvider
     protected $useHtmlVarDumper = false;
 
     /**
-     * Sets a flag indicating whether the Symfony HtmlDumper will be used to dump variables for
+     * Sets a flag indicating whether the HtmlDumper will be used to dump variables for
      * rich variable rendering.
      *
      * @param bool $value
@@ -37,7 +37,7 @@ class ConfigCollector extends DataCollector implements Renderable, AssetProvider
     }
 
     /**
-     * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
+     * Indicates whether the HtmlDumper will be used to dump variables for rich variable
      * rendering.
      *
      * @return mixed

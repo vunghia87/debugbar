@@ -60,7 +60,7 @@ return [
         'time'            => true,  // Time Datalogger
         'memory'          => true,  // Memory usage
         'exceptions'      => true,  // Exception displayer
-        'request'         => true,  // Regular or special Symfony request logger
+        'request'         => true,  // Regular or special request logger
         'db'              => false, // Show database (PDO) queries and bindings
         'response'        => false, // Show response by ob_start
         'memcache'        => false, // Show cache by memcache
