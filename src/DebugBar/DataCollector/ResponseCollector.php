@@ -38,16 +38,20 @@ class ResponseCollector extends DataCollector implements Renderable
      */
     public function collect()
     {
+        $allHeaders = getallheaders();
+        $contentType = $allHeaders['Content-Type'] ?? 'text/html';
+        $contentType = explode(';', $contentType)[0];
+
         if ($this->isJson($this->content)) {
-            return json_decode($this->content, true);
+            return [$contentType => $this->content];
         }
 
-        return ['Html' => $this->parseTitle($this->content)];
+        return [$contentType => $this->parseContent($this->content)];
     }
 
-    protected function parseTitle($contents)
+    protected function parseContent($contents)
     {
-        return preg_match('/<title[^>]*>(.*?)<\/title>/ims', $contents, $matches) ? $matches[1] : 'Invalid Title';
+        return is_string($contents) ? "String (" . strlen($contents) . ")" : "String...";
     }
 
     protected function isJson($string)
