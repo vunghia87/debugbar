@@ -293,8 +293,8 @@ div.phpdebugbar .phpdebugbar-header select {
 
 dl.phpdebugbar-widgets-kvlist dt,
 dl.phpdebugbar-widgets-kvlist dd {
-    min-height: 20px;
-    line-height: 20px;
+    min-height: 21px;
+    line-height: 21px;
     padding: 4px 5px 5px;
     border-top: 0px;
 }
@@ -365,6 +365,12 @@ div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugb
     text-transform: uppercase;
     font-style: normal;
     color: #333;
+}
+
+div.phpdebugbar-widgets-messages .phpdebugbar-widgets-list-item pre,
+.phpdebugbar-widgets-htmlvarlist .phpdebugbar-widgets-value pre{
+    background: transparent !important;
+    border-bottom:none!important;
 }
 
 .phpdebugbar-widgets-toolbar i.phpdebugbar-fa.phpdebugbar-fa-search {

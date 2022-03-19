@@ -84,5 +84,8 @@ return [
         'messages' => [
             'shouldTrace' => false
         ],
+        'request' => [
+            'shouldServer' => false
+        ],
     ],
 ];

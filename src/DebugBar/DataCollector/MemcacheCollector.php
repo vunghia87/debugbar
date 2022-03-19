@@ -75,9 +75,9 @@ class MemcacheCollector extends DataCollector implements Renderable, AssetProvid
      */
     protected function parseValue($value)
     {
-        if (is_object($value)) {
-            return get_class($value);
-        }
+//        if (is_object($value)) {
+//            return get_class($value);
+//        }
 
         return $this->getDataFormatter()->formatVar($value);
     }

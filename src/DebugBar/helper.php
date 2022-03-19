@@ -10,6 +10,8 @@ function debugbar()
     return \DebugBar\AdvanceDebugBar::getInstance();
 }
 
+//dumper
+
 //autoload modify class
 function ProxyGlobalCache()
 {

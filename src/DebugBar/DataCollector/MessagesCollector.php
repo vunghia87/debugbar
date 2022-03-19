@@ -11,7 +11,6 @@
 namespace DebugBar\DataCollector;
 
 use DebugBar\Supports\DebugTraceFrame;
-use Psr\Log\AbstractLogger;
 use DebugBar\DataFormatter\DataFormatterInterface;
 use DebugBar\DataFormatter\DebugBarVarDumper;
 

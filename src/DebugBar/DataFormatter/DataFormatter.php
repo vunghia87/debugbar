@@ -10,8 +10,7 @@
 
 namespace DebugBar\DataFormatter;
 
-use Symfony\Component\VarDumper\Cloner\VarCloner;
-use Symfony\Component\VarDumper\Dumper\CliDumper;
+use DebugBar\Dumper\Dumper;
 
 class DataFormatter implements DataFormatterInterface
 {
@@ -20,8 +19,11 @@ class DataFormatter implements DataFormatterInterface
      */
     public function __construct()
     {
-        $this->cloner = new VarCloner();
-        $this->dumper = new CliDumper();
+        $this->dumper = (new Dumper())
+            ->depth(3)
+            ->filter(true)
+            ->onlyVar(true)
+            ->type('string');
     }
 
     /**
@@ -30,20 +32,7 @@ class DataFormatter implements DataFormatterInterface
      */
     public function formatVar($data)
     {
-        $output = '';
-
-        $this->dumper->dump(
-            $this->cloner->cloneVar($data),
-            function ($line, $depth) use (&$output) {
-                // A negative depth means "end of dump"
-                if ($depth >= 0) {
-                    // Adds a two spaces indentation to the line
-                    $output .= str_repeat('  ', $depth).$line."\n";
-                }
-            }
-        );
-
-        return trim($output);
+        return $this->dumper->dump($data);
     }
 
     /**

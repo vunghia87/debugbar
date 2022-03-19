@@ -17,7 +17,7 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
 {
     // The HTML var dumper requires debug bar users to support the new inline assets, which not all
     // may support yet - so return false by default for now.
-    protected $useHtmlVarDumper = false;
+    protected $useHtmlVarDumper = true;
 
     /**
      * Sets a flag indicating whether the Symfony HtmlDumper will be used to dump variables for
@@ -43,21 +43,32 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
         return $this->useHtmlVarDumper;
     }
 
+    protected $shouldServer = false;
+
+    public function __construct($shouldServer = false)
+    {
+        $this->shouldServer = $shouldServer;
+    }
+
     /**
      * @return array
      */
     public function collect()
     {
         $vars = array('_GET', '_POST', '_SESSION', '_COOKIE', '_SERVER');
+        if (!$this->shouldServer) {
+            unset($vars[4]);
+        }
         $data = array();
 
-        foreach ($vars as $var) {
+        foreach ($vars as $index => $var) {
             if (isset($GLOBALS[$var])) {
                 $key = "$" . $var;
+                $data[$index]['method'] = $key;
                 if ($this->isHtmlVarDumperUsed()) {
-                    $data[$key] = $this->getVarDumper()->renderVar($GLOBALS[$var]);
+                    $data[$index]['value'] = $this->getVarDumper()->renderVar($GLOBALS[$var]);
                 } else {
-                    $data[$key] = $this->getDataFormatter()->formatVar($GLOBALS[$var]);
+                    $data[$index]['value'] = $this->getDataFormatter()->formatVar($GLOBALS[$var]);
                 }
             }
         }
@@ -77,7 +88,10 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
      * @return array
      */
     public function getAssets() {
-        return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : array();
+        $dumperAsset = $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : array();
+        return array_merge(['js' => 'widgets/requests/widget.js'], $dumperAsset);
+
+        //return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : array();
     }
 
     /**
@@ -91,7 +105,7 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
         return array(
             "request" => array(
                 "icon" => "tags",
-                "widget" => $widget,
+                "widget" => "PhpDebugBar.Widgets.RequestWidget",
                 "map" => "request",
                 "default" => "{}"
             )

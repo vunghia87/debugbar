@@ -85,7 +85,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
         // still correctly format code even with existing markup in it.
         if ($.isNumeric(highlightedLine)) {
             if ($.isNumeric(firstLineNumber)) {
-                highlightedLine = highlightedLine - firstLineNumber + 1;
+                highlightedLine = highlightedLine - firstLineNumber + 5;
             }
             codeElement.html(function (index, html) {
                 var currentLine = 1;
@@ -594,7 +594,6 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 if (e.surrounding_lines) {
                     var pre = createCodeBlock(e.surrounding_lines.join(""), 'php', e.start, e.line).addClass(csscls('file')).appendTo(li);
                     if (!e.stack_trace_html) {
-                        // This click event makes the var-dumper hard to use.
                         li.click(function () {
                             if (pre.is(':visible')) {
                                 pre.hide();
@@ -604,9 +603,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                         });
                     }
                 }
-                if (e.stack_trace_html) {
-                    $('<span />').addClass(csscls('filename')).html(e.stack_trace_html).appendTo(li);
-                } else if (e.stack_trace) {
+                if (e.stack_trace) {
                     e.stack_trace.split("\n").forEach(function (trace) {
                         var $traceLine = $('<div />');
                         $('<span />').addClass(csscls('filename')).text(trace).appendTo($traceLine);

@@ -135,7 +135,8 @@ class AdvanceDebugBar extends DebugBar
         }
 
         if ($this->shouldCollect('request', true)) {
-            $this->addCollector(new \DebugBar\DataCollector\RequestDataCollector());
+            $shouldServer = $this->config['options']['request']['shouldServer'] ?? false;
+            $this->addCollector(new \DebugBar\DataCollector\RequestDataCollector($shouldServer));
         }
 
         if ($this->shouldCollect('auth', false)) {
