@@ -3,22 +3,15 @@
 use DebugBar\Dumper\Dumper;
 use DebugBar\Dumper\DumperCheck;
 
-if (!function_exists('xx')) {
-    function xx($var, ...$moreVars)
+if (!function_exists('xdump')) {
+    function xdump($var, ...$moreVars)
     {
-        $dumper = new Dumper();
-        $dumper->filter(false)->onlyVar(true)->depth(2);
-        if (in_array(\PHP_SAPI, ['cli', 'phpdbg'], true)) {
-            $dumper->type('string');
-        } else {
-            $dumper->type('html');
-        }
-        if (!$var instanceof DumperCheck) {
-            echo $dumper->dump($var);
-            foreach ($moreVars as $value) {
-                echo $dumper->dump($value);
-            }
-        } else {
+        $dumper = (new Dumper())
+            ->type(in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) ? 'string' : 'html')
+            ->filter(false)
+            ->onlyVar(true)
+            ->depth(2);
+        if ($var instanceof DumperCheck) {
             foreach ($moreVars as $value) {
                 if ($var::check()) {
                     continue;
@@ -26,27 +19,32 @@ if (!function_exists('xx')) {
                 echo $dumper->dump($value);
                 $var::reset();
             }
+            return;
         }
+        echo $dumper->dump($var);
+        foreach ($moreVars as $value) {
+            echo $dumper->dump($value);
+        }
+    }
+}
 
+if (!function_exists('xx')) {
+    function xx($var, ...$moreVars)
+    {
+        xdump($var, ...$moreVars);
+        exit(1);
     }
 }
 
 if (!function_exists('xxx')) {
     function xxx($var, ...$moreVars)
     {
-        $dumper = new Dumper();
-        $dumper->filter(true)->onlyVar(false)->depth(3);
-        if (in_array(\PHP_SAPI, ['cli', 'phpdbg'], true)) {
-            $dumper->type('string');
-        } else {
-            $dumper->type('html');
-        }
-        if (!$var instanceof DumperCheck) {
-            echo $dumper->dump($var);
-            foreach ($moreVars as $value) {
-                echo $dumper->dump($value);
-            }
-        } else {
+        $dumper = (new Dumper())
+            ->type(in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) ? 'string' : 'html')
+            ->filter(false)
+            ->onlyVar(false)
+            ->depth(3);
+        if ($var instanceof DumperCheck) {
             foreach ($moreVars as $value) {
                 if ($var::check()) {
                     continue;
@@ -54,6 +52,11 @@ if (!function_exists('xxx')) {
                 echo $dumper->dump($value);
                 $var::reset();
             }
+            return;
+        }
+        echo $dumper->dump($var);
+        foreach ($moreVars as $value) {
+            echo $dumper->dump($value);
         }
         exit(1);
     }

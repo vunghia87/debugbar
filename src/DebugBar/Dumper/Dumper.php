@@ -142,10 +142,15 @@ class Dumper
         }
 
         if (gettype($variable) == "object") {
+
             $output .= strtr("class <b class='obj'>:class</b>", [":class" => get_class($variable)]);
 
             if (get_parent_class($variable)) {
                 $output .= strtr(" extends <b class='obj'>:parent</b>", [":parent" => get_parent_class($variable)]);
+            }
+
+            if (!empty(class_implements($variable))) {
+                $output .= strtr(" implements <b class='obj'>:implements</b>", [":implements" => implode(',', class_implements($variable))]);
             }
 
             $output .= " {";
@@ -160,7 +165,8 @@ class Dumper
 //                return $output . " listed... }";
 //            }
 
-            if ($variable instanceof \stdClass) {
+            $debugClass = get_debug_type($variable);
+            if ($debugClass === 'stdClass') {
                 $attr = get_class_methods($variable);
 
                 $output .= strtr("<span class='dump obj' onclick='toggle(this)'>#:count </span><span>", [":count" => count(get_object_vars($variable))]);
@@ -176,8 +182,23 @@ class Dumper
                     $this->methods[] = get_class($variable);
                     $output .= str_repeat($space, $tab + 1) . strtr("-><span class='method'>:method</span>();\n", [":method" => $value]);
                 }
+            }
+            elseif (in_array($debugClass, ['SimpleXMLElement','DOMDocument'])) {
+                $variable = (array) $variable;
+                $count = \count($variable);
 
-            } else {
+                if($count == 0){
+                    return $output . "}";
+                }
+
+                $output .= strtr("<span class='dump obj' onclick='toggle(this)'>#:count </span><span>", [":count" => $count]);
+                $output .= "\n";
+                foreach ($variable as $key => $value) {
+                    $output .= str_repeat($space, $tab) . strtr("<span class='variable'>:key</span> = ", [":key" => $key]);
+                    $output .= $this->output($value, "", $tab + 1) . "\n";
+                }
+            }
+            else {
                 $this->methods[] = get_class($variable);
 
                 $reflect = new \ReflectionClass($variable);
@@ -236,11 +257,6 @@ class Dumper
         }
 
         if (is_string($variable)) {
-
-            if (strpos($variable, '<pre data-debug') !== false) {
-                return $output . $variable;
-            }
-
             return $output . strtr("<b class='str'>string</b> (<span class='str'>:length</span>) \"<span class='str'>:var</span>\"", [":length" => strlen($variable), ":var" => nl2br(htmlentities($variable, ENT_IGNORE, "utf-8"))]);
         }
 
@@ -269,11 +285,7 @@ class Dumper
 
     protected function outputString($variable, $name = null, $tab = 1)
     {
-        $html = $this->output($variable, $name, $tab);
-//        $html = preg_replace("/<style\\b[^>]*>(.*?)<\\/style>/s", "", $html);
-//        $html = preg_replace("/<script\\b[^>]*>(.*?)<\\/script>/s", "", $html);
-//        $html = preg_replace("/Collapse/", "", $html);
-        return strip_tags($html);
+        return strip_tags($this->output($variable, $name, $tab));
     }
 
     public function getDumpHeader()
