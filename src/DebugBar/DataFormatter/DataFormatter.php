@@ -14,9 +14,9 @@ use DebugBar\Dumper\Dumper;
 
 class DataFormatter implements DataFormatterInterface
 {
-    /**
-     * DataFormatter constructor.
-     */
+    /** @var Dumper  */
+    protected $dumper;
+
     public function __construct()
     {
         $this->dumper = (new Dumper())

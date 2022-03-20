@@ -10,11 +10,6 @@ class DebugBarVarDumper implements AssetProvider
     /** @var Dumper */
     protected $dumper;
 
-    /**
-     * Gets the DebugBarHtmlDumper instance with configuration options set.
-     *
-     * @return Dumper
-     */
     protected function getDumper()
     {
         if (!$this->dumper) {

@@ -1,5 +1,7 @@
 <?php
 
+require __DIR__ . '/Dumper/dump.php';
+
 function event()
 {
     return DebugBar\Events\Dispatcher::getInstance();
@@ -9,8 +11,6 @@ function debugbar()
 {
     return \DebugBar\AdvanceDebugBar::getInstance();
 }
-
-//dumper
 
 //autoload modify class
 function ProxyGlobalCache()

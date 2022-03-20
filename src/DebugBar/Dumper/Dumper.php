@@ -15,6 +15,7 @@ class Dumper
     protected $filters = \ReflectionProperty::IS_PUBLIC;
     protected $onlyVar = true;
     protected $type = 'html'; // html, string, cli NOT_SUPPORT
+    protected static $isHeaderDumped = false;
 
     public function depth(int $depth)
     {
@@ -53,7 +54,11 @@ class Dumper
         $this->methods = [];
 
         if ($this->type == 'html') {
-            return strtr("<pre style=':style'>:output</pre>", [":style" => $this->styles['html']['pre'], ":output" => $this->output($variable, $name)]);
+            $template = [
+                ":style" => $this->styles['html']['pre'],
+                ":output" => $this->output($variable, $name)
+            ];
+            return strtr("<pre style=':style'>:output</pre>", $template) . $this->getDumpHeader();
         }
 
         if ($this->type == 'string') {
@@ -156,7 +161,7 @@ class Dumper
 //            }
 
             if ($variable instanceof \stdClass) {
-                $attr = get_classmethods($variable);
+                $attr = get_class_methods($variable);
 
                 $output .= strtr("<span class='dump obj' onclick='toggle(this)'>#:count </span><span>", [":count" => count(get_object_vars($variable))]);
 
@@ -265,11 +270,20 @@ class Dumper
     protected function outputString($variable, $name = null, $tab = 1)
     {
         $html = $this->output($variable, $name, $tab);
+        $html = preg_replace("/<style\\b[^>]*>(.*?)<\\/style>/s", "", $html);
+        $html = preg_replace("/<script\\b[^>]*>(.*?)<\\/script>/s", "", $html);
+        $html = preg_replace("/Collapse/", "", $html);
         return strip_tags($html);
     }
 
     public function getDumpHeader()
     {
+        if (static::$isHeaderDumped) {
+            return;
+        }
+
+        static::$isHeaderDumped = true;
+
         $style = '<style>
             .dump{cursor: pointer;color:#fd8b19!important}
             .dump:hover{font-weight: bold}
@@ -320,6 +334,6 @@ class Dumper
             </script>
         ";
 
-        return $style . $script . "<button style='position: fixed;right: 35px;bottom: 5px;z-index: 9999999;font-size: 11px;background: #000;color: #fff' onclick='collapseAll()'>Toggle</button></div>";
+        return $style . $script . "<button style='position: fixed;right: 35px;bottom: 5px;z-index: 9999999;font-size: 11px;background: #000;color: #fff' onclick='collapseAll()'>Collapse</button></div>";
     }
 }
