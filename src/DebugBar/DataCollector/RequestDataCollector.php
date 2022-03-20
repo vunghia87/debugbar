@@ -50,8 +50,6 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
         $this->shouldServer = $shouldServer;
     }
 
-    protected $statusCode = 200;
-
     public static $statusTexts = [
         100 => 'Continue',
         101 => 'Switching Protocols',
@@ -118,7 +116,7 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
     ];
 
     /**
-     * @return array
+     * @return \stdClass
      */
     public function collect()
     {
@@ -132,7 +130,7 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
             $key = "$" . '_URL';
             $data[0]['method'] = $key;
 
-            $this->statusCode = $statusCode = (isset($GLOBALS['http_response_code']) ? $GLOBALS['http_response_code'] : 200);
+            $statusCode = http_response_code() ?? 200;
 
             $info = [
                 'url' => (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . strtok($_SERVER['REQUEST_URI'], '?'),
@@ -159,7 +157,10 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
                 : $this->getDataFormatter()->formatVar($item['value']);
         }
 
-        return $data;
+        $request = new \stdClass();
+        $request->data = $data;
+        $request->status_code = $statusCode;
+        return $request;
     }
 
     /**
@@ -219,25 +220,19 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
      */
     public function getWidgets()
     {
-        $info = array(
+        return array(
             "request" => array(
                 "icon" => "tags",
                 "widget" => "PhpDebugBar.Widgets.RequestWidget",
-                "map" => "request",
+                "map" => "request.data",
                 "default" => "{}",
             ),
             "status" => array(
-                "icon" => "check",
-                "tooltip" => static::$statusTexts[$this->statusCode] ?? 'unknown status',
-                "map" => $this->statusCode,
-                "default" => "200"
+                "icon" => "shield",
+                "tooltip" => "Status Code",
+                "map" => "request.status_code",
+                "default" => ""
             )
         );
-
-        if ($this->statusCode < 200 || $this->statusCode > 301) {
-            $info['status']['icon'] = 'times';
-        }
-
-        return $info;
     }
 }

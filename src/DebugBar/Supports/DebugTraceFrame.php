@@ -30,10 +30,10 @@ trait DebugTraceFrame
     protected $editor = 'phpstorm';
 
     /**
-     * @param $debugBackTrace
+     * @param array $debugBackTrace
      * @return void
      */
-    public function debugTrace($debugBackTrace = [])
+    public function debugTrace(array $debugBackTrace = [])
     {
         $this->debugBacktrace = $debugBackTrace;
     }
@@ -77,7 +77,7 @@ trait DebugTraceFrame
             'index' => $index,
             'namespace' => null,
             'name' => null,
-            'line' => isset($trace['line']) ? $trace['line'] : '?',
+            'line' => $trace['line'] ?? '?',
         ];
 
         if (isset($trace['file']) && !$this->fileIsInExcludedPath($trace['file'])) {

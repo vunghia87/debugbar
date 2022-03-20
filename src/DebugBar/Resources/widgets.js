@@ -372,12 +372,13 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
                                 $parts.push(source.name);
                                 $parts.push($span.clone().text(':' + source.line));
-                                $parts.push('&nbsp;');
+
                                 if (source.editorHref) {
+                                    $parts.push('&nbsp;');
                                     $parts.push($('<a target="_blank" href="' + source.editorHref + '"></a>').addClass(csscls('editor-link')));
                                 }
 
-                                li.append($parts).removeClass(csscls('list-item')).addClass(csscls('table-list-item'));
+                                li.append($parts).removeClass(csscls('list-item')).addClass(csscls('table-list-item')).css('text-align','right');
                             }
                         });
 

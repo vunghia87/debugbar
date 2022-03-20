@@ -2,6 +2,7 @@
 
 use DebugBar\Dumper\Dumper;
 use DebugBar\Dumper\DumperCheck;
+use DebugBar\Dumper\DumperFrame;
 
 if (!function_exists('xdump')) {
     function xdump($var, ...$moreVars)
@@ -19,11 +20,11 @@ if (!function_exists('xdump')) {
                 echo $dumper->dump($value);
                 $var::reset();
             }
-            return;
-        }
-        echo $dumper->dump($var);
-        foreach ($moreVars as $value) {
-            echo $dumper->dump($value);
+        } else {
+            echo $dumper->dump($var);
+            foreach ($moreVars as $value) {
+                echo $dumper->dump($value);
+            }
         }
     }
 }
@@ -32,6 +33,8 @@ if (!function_exists('xx')) {
     function xx($var, ...$moreVars)
     {
         xdump($var, ...$moreVars);
+        $trace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS);
+        echo new DumperFrame($trace);
         exit(1);
     }
 }
@@ -52,12 +55,14 @@ if (!function_exists('xxx')) {
                 echo $dumper->dump($value);
                 $var::reset();
             }
-            return;
+        } else {
+            echo $dumper->dump($var);
+            foreach ($moreVars as $value) {
+                echo $dumper->dump($value);
+            }
         }
-        echo $dumper->dump($var);
-        foreach ($moreVars as $value) {
-            echo $dumper->dump($value);
-        }
+        $trace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS);
+        echo new DumperFrame($trace);
         exit(1);
     }
 }
