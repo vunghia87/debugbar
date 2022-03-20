@@ -28,7 +28,7 @@ trait DebugTraceFrame
     ];
 
     protected $editor = 'phpstorm';
-    
+
     /**
      * @param $debugBackTrace
      * @return void
@@ -88,8 +88,8 @@ trait DebugTraceFrame
             if (!isset($config['remote_sites_path']) && !isset($config['local_sites_path'])) {
                 return $frame;
             }
-            $filePath = trim(str_replace(trim($config['remote_sites_path'],'/'), '', $file),'/');
-            $folderPath = trim($config['local_sites_path'],'\\') .'\\'. str_replace('/', '\\', $filePath);
+            $filePath = trim(str_replace(trim($config['remote_sites_path'], '/'), '', $file), '/');
+            $folderPath = trim($config['local_sites_path'], '\\') . '\\' . str_replace('/', '\\', $filePath);
             $frame->editorHref = str_replace(['%file', '%line'], [$folderPath, $frame->line], $this->editors[$this->editor]);
             return $frame;
         }

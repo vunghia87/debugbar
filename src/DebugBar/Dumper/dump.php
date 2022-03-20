@@ -24,8 +24,10 @@ if (!function_exists('xx')) {
                     continue;
                 }
                 echo $dumper->dump($value);
+                $var::reset();
             }
         }
+
     }
 }
 
@@ -50,6 +52,7 @@ if (!function_exists('xxx')) {
                     continue;
                 }
                 echo $dumper->dump($value);
+                $var::reset();
             }
         }
         exit(1);
@@ -57,21 +60,15 @@ if (!function_exists('xxx')) {
 }
 
 if (!function_exists('skip')) {
-    function skip($skip, $reset = false)
+    function skip($skip)
     {
-        if ($reset) {
-            DumperCheck::reset();
-        }
         return DumperCheck::skip($skip);
     }
 }
 
 if (!function_exists('when')) {
-    function when($skip, $reset = false)
+    function when($skip)
     {
-        if ($reset) {
-            DumperCheck::reset();
-        }
         return DumperCheck::when($skip);
     }
 }

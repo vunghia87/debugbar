@@ -45,7 +45,7 @@ class AuthCollector extends DataCollector implements Renderable
         $name = $this->getName();
         return array(
             "$name" => array(
-                "icon" => "gear",
+                "icon" => "user-secret",
                 "widget" => 'PhpDebugBar.Widgets.VariableListWidget',
                 "map" => "$name",
                 "default" => "{}"

@@ -90,7 +90,7 @@ class CommandCollector extends DataCollector implements Renderable, AssetProvide
     {
         return array(
             "command" => array(
-                "icon" => "clipboard",
+                "icon" => "terminal",
                 "widget" => "PhpDebugBar.Widgets.CommandWidget",
                 "map" => "command.commands",
                 "default" => "{}"

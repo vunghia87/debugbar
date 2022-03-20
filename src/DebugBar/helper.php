@@ -1,29 +1,25 @@
 <?php
 
 require __DIR__ . '/Dumper/dump.php';
+require __DIR__ . '/Partner/partner.php';
 
-function event()
-{
-    return DebugBar\Events\Dispatcher::getInstance();
+if (!function_exists('event')) {
+    function event()
+    {
+        return DebugBar\Events\Dispatcher::getInstance();
+    }
 }
 
-function debugbar()
-{
-    return \DebugBar\AdvanceDebugBar::getInstance();
+if (!function_exists('debugbar')) {
+    function debugbar()
+    {
+        return \DebugBar\AdvanceDebugBar::getInstance();
+    }
 }
 
-//autoload modify class
-function ProxyGlobalCache()
-{
-    require_once __DIR__ . '/Partner/GlobalCache.php';
-}
-
-function ProxyNewRelic()
-{
-    require_once __DIR__ . '/Partner/NewRelic.php';
-}
-
-function ProxyCommandExecution()
-{
-    require_once __DIR__ . '/Partner/CommandExecution.php';
+if (!function_exists('info')) {
+    function info(...$var)
+    {
+        debugbar()->info($var);
+    }
 }

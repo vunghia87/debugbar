@@ -58,7 +58,7 @@ class Dumper
                 ":style" => $this->styles['html']['pre'],
                 ":output" => $this->output($variable, $name)
             ];
-            return strtr("<pre style=':style'>:output</pre>", $template) . $this->getDumpHeader();
+            return $this->getDumpHeader() . strtr("<pre style=':style'>:output</pre>", $template);
         }
 
         if ($this->type == 'string') {
@@ -270,16 +270,16 @@ class Dumper
     protected function outputString($variable, $name = null, $tab = 1)
     {
         $html = $this->output($variable, $name, $tab);
-        $html = preg_replace("/<style\\b[^>]*>(.*?)<\\/style>/s", "", $html);
-        $html = preg_replace("/<script\\b[^>]*>(.*?)<\\/script>/s", "", $html);
-        $html = preg_replace("/Collapse/", "", $html);
+//        $html = preg_replace("/<style\\b[^>]*>(.*?)<\\/style>/s", "", $html);
+//        $html = preg_replace("/<script\\b[^>]*>(.*?)<\\/script>/s", "", $html);
+//        $html = preg_replace("/Collapse/", "", $html);
         return strip_tags($html);
     }
 
     public function getDumpHeader()
     {
         if (static::$isHeaderDumped) {
-            return;
+            return '';
         }
 
         static::$isHeaderDumped = true;
@@ -334,6 +334,12 @@ class Dumper
             </script>
         ";
 
-        return $style . $script . "<button style='position: fixed;right: 35px;bottom: 5px;z-index: 9999999;font-size: 11px;background: #000;color: #fff' onclick='collapseAll()'>Collapse</button></div>";
+        return $this->sanitizeOutput($style . $script . "<button style='position: fixed;right: 35px;bottom: 5px;z-index: 9999999;font-size: 11px;background: #000;color: #fff' onclick='collapseAll()'>Collapse</button></div>");
+    }
+
+    public function sanitizeOutput($buffer) {
+        $search = array('/\>[^\S ]+/s', '/[^\S ]+\</s', '/(\s)+/s', '/<!--(.|\s)*?-->/');
+        $replace = array('>', '<', '\\1', '');
+        return preg_replace($search, $replace, $buffer);
     }
 }
