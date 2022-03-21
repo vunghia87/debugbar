@@ -23,3 +23,14 @@ if (!function_exists('info')) {
         debugbar()->info($var);
     }
 }
+
+if (!function_exists('report')) {
+    function report($exception)
+    {
+        if ($exception instanceof Throwable) {
+            return debugbar()->addThrowable($exception);
+        }
+
+        return debugbar()->error($exception);
+    }
+}

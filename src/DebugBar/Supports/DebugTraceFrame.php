@@ -93,7 +93,7 @@ trait DebugTraceFrame
     /**
      * @param string $file
      * @param int $line
-     * @return array|string|string[]|null
+     * @return string|null
      */
     public function getEditorHref(string $file, int $line)
     {

@@ -73,8 +73,8 @@ if (!function_exists('xe')) {
             'line' => $e->getLine(),
             'class' => get_class($e),
             'function' => "<br /><b style='color: red'>" . $e->getMessage() ."</b>",
-            'type' => " [" . $e->getCode() . "] ",
-            'args' => [],
+            'type' => "[" . $e->getCode() . "]",
+            'args' => '',
         ];
         $trace = $e->getTrace();
         array_unshift($trace, $ex);
