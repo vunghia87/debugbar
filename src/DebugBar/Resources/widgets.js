@@ -378,7 +378,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                                     $parts.push($('<a target="_blank" href="' + source.editorHref + '"></a>').addClass(csscls('editor-link')));
                                 }
 
-                                li.append($parts).removeClass(csscls('list-item')).addClass(csscls('table-list-item')).css('text-align','right');
+                                li.append($parts).removeClass(csscls('list-item')).addClass(csscls('table-list-item'));
                             }
                         });
 
@@ -612,9 +612,12 @@ if (typeof(PhpDebugBar) == 'undefined') {
                     }
                 }
                 if (e.stack_trace) {
-                    e.stack_trace.split("\n").forEach(function (trace) {
+                    e.stack_trace.split("\n").forEach(function (trace, index) {
                         var $traceLine = $('<div />');
-                        $('<span />').addClass(csscls('filename')).text(trace).appendTo($traceLine);
+                        var $span = $('<span />').addClass(csscls('filename')).text(trace).appendTo($traceLine);
+                        if (e.stack_trace_links.length > 0 && e.stack_trace_links[index]) {
+                            $('<a target="_blank" href="' + e.stack_trace_links[index] + '"></a>').addClass(csscls('editor-link')).appendTo($span);
+                        }
                         $traceLine.appendTo(li);
                     });
                 }

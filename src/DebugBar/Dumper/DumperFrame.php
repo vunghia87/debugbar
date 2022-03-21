@@ -83,15 +83,18 @@ class DumperFrame
 
         $html = '<div class="stack"><div class="stack-nav"><ul class="stack-frames-scroll">';
         foreach ($this->debugBacktrace as $key => $value) {
+            $class = $value['class'] ?? '';
+            $class = is_object($class) ? get_class($class) : $class;
             $html .= strtr(
                 '<li onClick=":click" class="stack-frame :active"><span class="stack-frame-number">:index</span><div class="stack-frame-text"><span class="stack-frame-header">:file</span><span class="stack-frame-class">::class:type:function(:args)</span></div><div class="stack-frame-line"> ::line</div></li>', [
                 ':click' => "show(this,{$key})",
                 ':active' => $key == 0 ? 'active' : '',
                 ':index' => ++$key,
-                ':class' => $value['class'] ?? '',
+                ':class' => $class,
                 ':type' => $value['type'] ?? '',
                 ':function' => $value['function'] ?? '',
-                ':args' => $value['args'] ? implode(',', $value['args']) : '',
+                //':args' => (array)$value['args'] ? implode(',', $value['args']) : '',
+                ':args' => '',
                 ':file' => $value['file'],
                 ':line' => $value['line'],
             ]);
@@ -143,8 +146,7 @@ class DumperFrame
             .stack-view{position: absolute; top: 0;right: 0;bottom: 0;left: 0;overflow: auto;background-color: #262632;font-size: 0.75rem;}
             .file-line{font: 13px monospace;line-height: 1.2em;padding: 3px 10px;text-align: left;color: #b9b5b8;margin: 0;border-bottom: 1px solid #464646;white-space: pre-wrap;word-wrap: break-word;}
             .stack-code{ margin: 0 0 0 30px}
-            .stack-code li:hover{background: rgba(255, 100, 100, .07)}
-            .stack-code-current{ background: rgba(255, 100, 100, .07) }
+            .stack-code li:hover, .stack-code-current{background: rgba(255, 100, 100, .07)}
             .stack-hidden{display: none}
         </style>";
 

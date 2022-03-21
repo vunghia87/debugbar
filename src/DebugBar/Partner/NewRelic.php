@@ -19,6 +19,7 @@ class NewRelic extends ProxyNewRelic
 
     private static function addThrowable($exception)
     {
+        error_log($exception);
         if ($exception instanceof Throwable) {
             return debugbar()->addThrowable($exception);
         }

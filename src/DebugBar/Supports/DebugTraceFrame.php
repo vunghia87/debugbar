@@ -83,18 +83,27 @@ trait DebugTraceFrame
         if (isset($trace['file']) && !$this->fileIsInExcludedPath($trace['file'])) {
             $file = $trace['file'];
             $frame->name = $file;
-            //instance debugBar
-            $config = debugbar()->getConfig();
-            if (!isset($config['remote_sites_path']) && !isset($config['local_sites_path'])) {
-                return $frame;
-            }
-            $filePath = trim(str_replace(trim($config['remote_sites_path'], '/'), '', $file), '/');
-            $folderPath = trim($config['local_sites_path'], '\\') . '\\' . str_replace('/', '\\', $filePath);
-            $frame->editorHref = str_replace(['%file', '%line'], [$folderPath, $frame->line], $this->editors[$this->editor]);
+            $frame->editorHref = $this->getEditorHref($trace['file'], $trace['line']);
             return $frame;
         }
 
         return false;
+    }
+
+    /**
+     * @param string $file
+     * @param int $line
+     * @return array|string|string[]|null
+     */
+    public function getEditorHref(string $file, int $line)
+    {
+        $config = debugbar()->getConfig();
+        if (!isset($config['remote_sites_path']) && !isset($config['local_sites_path'])) {
+            return null;
+        }
+        $filePath = trim(str_replace(trim($config['remote_sites_path'], '/'), '', $file), '/');
+        $folderPath = trim($config['local_sites_path'], '\\') . '\\' . str_replace('/', '\\', $filePath);
+        return str_replace(['%file', '%line'], [$folderPath, $line], $this->editors[$this->editor]);
     }
 
     /**

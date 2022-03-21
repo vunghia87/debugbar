@@ -323,30 +323,28 @@ class Dumper
             .pre{}
         </style>';
 
-        $script = "
-            <script>
-                function toggle(e) {
-                    return e.classList.toggle('dump-show');
+        $script = " <script>
+            function toggle(e) {
+                return e.classList.toggle('dump-show');
+            }
+            var dumps = document.getElementsByClassName('dump');
+            var active = 0;
+            function collapseAll(e) {
+                if (active === 0) {
+                    active = 1;
+                    Array.prototype.forEach.call(dumps, function(el) {
+                        el.classList.add('dump-show');
+                    });
+                } else {
+                    active = 0;
+                    Array.prototype.forEach.call(dumps, function(el) {
+                        el.classList.remove('dump-show');
+                    });
                 }
-                var dumps = document.getElementsByClassName('dump');
-                var active = 0;
-                function collapseAll(e) {
-                    if (active === 0) {
-                        active = 1;
-                        Array.prototype.forEach.call(dumps, function(el) {
-                            el.classList.add('dump-show');
-                        });
-                    }else{
-                        active = 0;
-                        Array.prototype.forEach.call(dumps, function(el) {
-                            el.classList.remove('dump-show');
-                        });
-                    }
-                }
-            </script>
-        ";
+            }
+        </script>";
 
-        return $this->sanitizeOutput($style . $script . "<button style='position: fixed;right: 5px;bottom: 35px;z-index: 9999999;font-size: 11px;background: #000;color: #fff' onclick='collapseAll()'>Collapse</button></div>");
+        return $this->sanitizeOutput($style . $script . "<button style='position: fixed;right: 5px;top: 3px;z-index: 9999999;font-size: 11px;background: #000;color: #fff' onclick='collapseAll()'>Collapse</button></div>");
     }
 
     public function sanitizeOutput($buffer) {

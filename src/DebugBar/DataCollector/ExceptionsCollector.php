@@ -103,7 +103,13 @@ class ExceptionsCollector extends DataCollector implements Renderable
             $lines = array("Cannot open the file ($filePath) in which the exception occurred ");
         }
 
-        $frame = $this->parseTrace(0, ['file' => $e->getFile(), 'line' => $e->getLine()]);
+        $stack_trace_links = [];
+        foreach ($e->getTrace() as $index => $trace) {
+            $stack_trace_links[$index] = '';
+            if ($trace['file'] && $trace['line']) {
+                $stack_trace_links[$index] = $this->getEditorHref($trace['file'], (int)$trace['line']);
+            }
+        }
 
         return array(
             'type' => get_class($e),
@@ -113,9 +119,10 @@ class ExceptionsCollector extends DataCollector implements Renderable
             'line' => $e->getLine(),
             'start' => $start ?? null,
             'stack_trace' => $e->getTraceAsString(),
+            'stack_trace_links' => $stack_trace_links,
             'surrounding_lines' => $lines,
+            'editor_href' => $this->getEditorHref($e->getFile(), $e->getLine()),
             //'xdebug_link' => $this->getXdebugLink($filePath, $e->getLine()),
-            'editor_href' => $frame->editorHref ?? false
         );
     }
 

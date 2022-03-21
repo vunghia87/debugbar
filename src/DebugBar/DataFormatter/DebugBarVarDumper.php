@@ -15,7 +15,7 @@ class DebugBarVarDumper implements AssetProvider
         if (!$this->dumper) {
             $this->dumper = (new Dumper())
                 ->depth(3)
-                ->filter(true)
+                ->filter(false)
                 ->onlyVar(true)
                 ->type('html');
         }
