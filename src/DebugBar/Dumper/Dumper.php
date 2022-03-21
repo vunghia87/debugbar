@@ -346,7 +346,7 @@ class Dumper
             </script>
         ";
 
-        return $this->sanitizeOutput($style . $script . "<button style='position: fixed;right: 35px;bottom: 5px;z-index: 9999999;font-size: 11px;background: #000;color: #fff' onclick='collapseAll()'>Collapse</button></div>");
+        return $this->sanitizeOutput($style . $script . "<button style='position: fixed;right: 5px;bottom: 35px;z-index: 9999999;font-size: 11px;background: #000;color: #fff' onclick='collapseAll()'>Collapse</button></div>");
     }
 
     public function sanitizeOutput($buffer) {

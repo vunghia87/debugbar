@@ -33,8 +33,7 @@ if (!function_exists('xx')) {
     function xx($var, ...$moreVars)
     {
         xdump($var, ...$moreVars);
-        $trace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS);
-        echo new DumperFrame($trace);
+        echo new DumperFrame(debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS));
         exit(1);
     }
 }
@@ -61,7 +60,23 @@ if (!function_exists('xxx')) {
                 echo $dumper->dump($value);
             }
         }
-        $trace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS);
+        echo new DumperFrame(debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS));
+        exit(1);
+    }
+}
+
+if (!function_exists('xe')) {
+    function xe(Throwable $e)
+    {
+        $ex = [
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'class' => get_class($e),
+            'function' => "<br /><b style='color: red'>" . $e->getMessage() ."</b>",
+            'type' => " [" . $e->getCode() . "] "
+        ];
+        $trace = $e->getTrace();
+        array_unshift($trace, $ex);
         echo new DumperFrame($trace);
         exit(1);
     }
