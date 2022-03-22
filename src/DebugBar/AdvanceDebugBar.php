@@ -197,7 +197,6 @@ class AdvanceDebugBar extends DebugBar
     public function isEnable()
     {
         if ($this->enabled === null) {
-
             $this->enabled = (bool)$this->config['enabled'] ?? false;
 
             if (php_sapi_name() === 'cli') {

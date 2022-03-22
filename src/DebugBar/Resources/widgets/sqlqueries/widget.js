@@ -51,8 +51,7 @@
 
             this.$list = new PhpDebugBar.Widgets.ListWidget({
                 itemRenderer: function (li, stmt) {
-                    this.$sql = $('<div />').addClass(csscls('sql')).appendTo(li);
-                    $('<span />').addClass(csscls('ellipsis')).text(stmt.sql).appendTo(this.$sql);
+                    this.$sql = $('<div />').addClass(csscls('sql')).addClass(csscls('ellipsis')).text(stmt.sql).appendTo(li);
                     if (stmt.duration_str) {
                         $('<span title="Duration" />').addClass(csscls('duration')).text(stmt.duration_str).appendTo(li);
                     }
@@ -146,10 +145,7 @@
 
                     if (stmt.backtrace && stmt.backtrace.length) {
                         table.append(function () {
-                            var icon = 'list-ul';
-                            var $icon = '<i class="phpdebugbar-fa phpdebugbar-fa-' + icon + ' phpdebugbar-text-muted"></i>';
-                            var $name = $('<td />').addClass(csscls('name')).html('Backtrace ' + $icon);
-                            var $value = $('<td />').addClass(csscls('value'));
+                            var $value = $('<td colspan="2" />').addClass(csscls('value'));
                             var $span = $('<span />').addClass('phpdebugbar-text-muted');
 
                             var $backtrace = new PhpDebugBar.Widgets.ListWidget({
@@ -158,9 +154,11 @@
                                         $span.clone().text(source.index + '.'),
                                         '&nbsp;',
                                     ];
+
                                     if (source.namespace) {
                                         $parts.push(source.namespace + '::');
                                     }
+
                                     $parts.push(source.name);
                                     $parts.push($span.clone().text(':' + source.line));
                                     if (source.editorHref) {
@@ -179,7 +177,7 @@
                                 .addClass(csscls('table-list'))
                                 .appendTo($value);
 
-                            return $('<tr />').append($name, $value);
+                            return $('<tr />').append($value);
                         });
                     }
                 }

@@ -109,10 +109,7 @@
 
                     if (stmt.backtrace && stmt.backtrace.length) {
                         table.append(function () {
-                            var icon = 'list-ul';
-                            var $icon = '<i class="phpdebugbar-fa phpdebugbar-fa-' + icon + ' phpdebugbar-text-muted"></i>';
-                            var $name = $('<td />').addClass(csscls('name')).html('Backtrace ' + $icon);
-                            var $value = $('<td />').addClass(csscls('value'));
+                            var $value = $('<td colspan="2" />').addClass(csscls('value'));
                             var $span = $('<span />').addClass('phpdebugbar-text-muted');
 
                             var $backtrace = new PhpDebugBar.Widgets.ListWidget({
@@ -128,6 +125,10 @@
 
                                     $parts.push(source.name);
                                     $parts.push($span.clone().text(':' + source.line));
+                                    if (source.editorHref) {
+                                        $parts.push('&nbsp;');
+                                        $parts.push($('<a target="_blank" href="' + source.editorHref + '"></a>').addClass(csscls('editor-link')));
+                                    }
 
                                     li.append($parts).removeClass(csscls('list-item')).addClass(csscls('table-list-item'));
                                 }
@@ -140,7 +141,7 @@
                                 .addClass(csscls('table-list'))
                                 .appendTo($value);
 
-                            return $('<tr />').append($name, $value);
+                            return $('<tr />').append($value);
                         });
                     }
                 }

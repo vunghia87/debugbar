@@ -101,14 +101,16 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         );
 
         foreach ($this->connections as $name => $pdo) {
-            $pdodata = $this->collectPDO($pdo, $this->timeCollector, $name);
-            $data['nb_statements'] += $pdodata['nb_statements'];
-            $data['nb_failed_statements'] += $pdodata['nb_failed_statements'];
-            $data['accumulated_duration'] += $pdodata['accumulated_duration'];
-            $data['memory_usage'] += $pdodata['memory_usage'];
-            $data['peak_memory_usage'] = max($data['peak_memory_usage'], $pdodata['peak_memory_usage']);
-            $data['statements'] = array_merge($data['statements'],
-                array_map(function ($s) use ($name) { $s['connection'] = $name; return $s; }, $pdodata['statements']));
+            $pdoData = $this->collectPDO($pdo, $this->timeCollector, $name);
+            $data['nb_statements'] += $pdoData['nb_statements'];
+            $data['nb_failed_statements'] += $pdoData['nb_failed_statements'];
+            $data['accumulated_duration'] += $pdoData['accumulated_duration'];
+            $data['memory_usage'] += $pdoData['memory_usage'];
+            $data['peak_memory_usage'] = max($data['peak_memory_usage'], $pdoData['peak_memory_usage']);
+            $data['statements'] = array_merge(
+                $data['statements'],
+                array_map(function ($s) use ($name) { $s['connection'] = $name; return $s; }, $pdoData['statements'])
+            );
         }
 
         $data['accumulated_duration_str'] = $this->getDataFormatter()->formatDuration($data['accumulated_duration']);

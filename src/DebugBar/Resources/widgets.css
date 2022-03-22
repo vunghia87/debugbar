@@ -1,3 +1,17 @@
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 pre.phpdebugbar-widgets-code-block {
     white-space: pre;
     word-wrap: normal;
@@ -262,7 +276,6 @@ a.phpdebugbar-widgets-editor-link:before {
 }
 
 .phpdebugbar-widgets-ellipsis {
-  width: 250px!important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -7,7 +7,7 @@ class Framer
     protected $debugBacktrace;
     protected $backtraceExcludePaths = [];
     protected $fileContentsCache = [];
-    protected $length = 60;
+    protected $length = 150;
     protected $maxTrace = 20;
     protected static $isHeaderDumped = false;
     protected $editors = [
@@ -139,7 +139,7 @@ class Framer
             $code = strtr('<pre class="stack-code" key=":key"><code lang=":lang">', [":key" => $key, ":lang" => $mime]);
             foreach ($value['lines'] as $index => $line) {
                 $lines .= strtr('<p class="stack-line"> <a target="_blank" href=":editorHref">:index </a></p>',[
-                    ":index" => $value['start'] + $index + 122,
+                    ":index" => $value['start'] + $index + 1,
                     ":editorHref" => $this->getEditorHref($value['file'], (int)$value['line'])
                 ]);
                 $code .= strtr('<p class="stack-code-line :current">:line</p>', [
@@ -207,10 +207,10 @@ class Framer
 
         $style = "<style>
             *{margin: 0;padding:0}
-            .stack {font-family: monospace;display: grid;align-items: stretch;grid-template: calc(100vh - 1rem) / 29rem 1fr}
+            .stack {font-family: monospace;display: grid;align-items: stretch;grid-template: calc(100vh - 1rem) / 22rem 1fr}
             .stack-nav{padding: 0;background: #262632;border-bottom-width: 0;border-right: 1px solid;overflow: hidden;height: 100%;border-color: #4b4b55;display: grid; grid-template: auto 1fr / 100%;position: relative;}
             .stack-frames-scroll{position: absolute;top: 0;right: 0;bottom: 0;left: 0;overflow-x: hidden;overflow-y: auto}
-            .stack-frame{cursor: pointer;transition: all 0.1s ease;display: grid; align-items: flex-end;grid-template-columns: 3rem 1fr auto;border-bottom: 1px solid; border-color: #4b4b55;background-color: #262632;}
+            .stack-frame{cursor: pointer;transition: all 0.1s ease;display: grid; align-items: flex-end;grid-template-columns: 2rem 1fr auto;border-bottom: 1px solid; border-color: #4b4b55;background-color: #262632;}
             .stack-frame.active{background-color: #3c2e60;z-index: 10;}
             .stack-frame.active .stack-frame-text { border-color: #7900F5FF;}
             .stack-frame-number{padding:0.5rem;color: #7e6ba7;font-feature-settings: 'tnum';font-variant-numeric: tabular-nums;text-align: center}
@@ -223,7 +223,7 @@ class Framer
             .stack-viewer{position: absolute; top: 0;right: 0;bottom: 0;left: 0;overflow: auto;background-color: #262632;font-size: 0.8rem;display: flex}
             .stack-ruler{position: sticky;flex: none;left: 0;z-index: 20;}
             .stack-lines{min-height: 100%;border-right: 1px solid; border-color: #eeeef5;background-color: #30303a;padding-top: 1rem; padding-bottom: 1rem; -webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
-            .stack-line{padding-left: 0.5rem;padding-right: 0.5rem;color: #f0f0f58c;line-height: 2;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;cursor: pointer;}
+            .stack-line{padding-left: 0.5rem;padding-right: 0.5rem;color: #f0f0f58c;line-height: 2;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;cursor: pointer;text-align: right}
             .stack-line a{color: #fff;text-decoration: none;}
             .stack-line:hover{background: #686861}
             .stack-code{ flex-grow: 1;padding-top: 1rem;padding-bottom: 1rem;}
@@ -258,9 +258,8 @@ class Framer
                          codes[j].innerHTML = codeHtml;
                     }
                 });
-                if(i == 0){
-                    frames[i].click()
-                }
+                if(i == 0) frames[i].click();
+               
             }
         </script>';
 

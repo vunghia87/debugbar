@@ -29,7 +29,8 @@ class MemcacheCollector extends DataCollector implements Renderable, AssetProvid
 
     protected $classMap = [
         'cache.set' => 'set',
-        'cache.get' => 'get'
+        'cache.get' => 'get',
+        'cache.delete' => 'delete'
     ];
 
     protected $data = [];

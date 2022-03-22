@@ -24,8 +24,8 @@ div.phpdebugbar-openhandler-overlay {
 div.phpdebugbar-openhandler {
     border: 1px solid #aaa;
     border-top: 3px solid #fa5661;
-    width: 95%;
-    height: 80%;
+    width: 100%;
+    height: 100%;
     padding: 10px;
     border-radius: 5px;
     overflow-y: scroll;

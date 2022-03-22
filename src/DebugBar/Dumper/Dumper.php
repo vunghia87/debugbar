@@ -303,7 +303,7 @@ class Dumper
             .dump + span{}
             .dump.dump-show:after {content: \'▶\'}
             .dump.dump-show + span {display: none}
-            .arr{color:#98fb98}
+            .arr{color:#6897bb}
             .bool{color:#ff6868}
             .float{color:#ffb939}
             .int{color:#ffb939}
@@ -313,9 +313,9 @@ class Dumper
             .method{color:#1290bf}
             .variable{color:#7ec699}
             .other{color:#fff}
-            .res{color:#BCD42A}
+            .res{color:#6a8759}
             .other{color:#fff}
-            .str{color:#BCD42A}
+            .str{color:#6a8759}
             .private{color:#d4b1c9}
             .protected{color:#f384d1}
             .public{color:#ff05b2}
@@ -344,7 +344,7 @@ class Dumper
             }
         </script>";
 
-        return $this->sanitizeOutput($style . $script . "<button style='position: fixed;right: 5px;top: 3px;z-index: 9999999;font-size: 11px;background: #000;color: #fff' onclick='collapseAll()'>Collapse</button></div>");
+        return $style . $script . "<button style='position: fixed;right: 5px;top: 3px;z-index: 9999999;font-size: 11px;background: #000;color: #fff' onclick='collapseAll()'>Collapse</button></div>";
     }
 
     public function sanitizeOutput($buffer) {

@@ -1,17 +1,5 @@
 <?php
 
-//autoload modify class
-function ProxyGlobalCache()
-{
-    include __DIR__ . '/GlobalCache.php';
-}
-
-function ProxyNewRelic()
-{
-    include __DIR__ . '/NewRelic.php';
-}
-
-function ProxyCommandExecution()
-{
-    include __DIR__ . '/CommandExecution.php';
-}
+class_alias(\DebugBar\Partner\ProxyGlobalCache::class, GlobalCache::class);
+class_alias(\DebugBar\Partner\ProxyNewRelic::class, NewRelic::class);
+class_alias(\DebugBar\Partner\ProxyCommandExecution::class, \BeSmartee\Utils\CommandExecution::class);

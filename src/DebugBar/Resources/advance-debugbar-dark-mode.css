@@ -24,7 +24,6 @@ div.phpdebugbar-openhandler,
 div.phpdebugbar div.phpdebugbar-header > div > *,
 div.phpdebugbar ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-label,
 div.phpdebugbar ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-collector,
-div.phpdebugbar code.phpdebugbar-widgets-sql span.hljs-keyword,
 div.phpdebugbar-openhandler .phpdebugbar-openhandler-header,
 div.phpdebugbar-openhandler .phpdebugbar-openhandler-header a {
     color: var(--color-gray-200);
@@ -66,7 +65,6 @@ div.phpdebugbar-openhandler .phpdebugbar-openhandler-header,
 div.phpdebugbar dl.phpdebugbar-widgets-kvlist > :nth-child(4n-1),
 div.phpdebugbar dl.phpdebugbar-widgets-kvlist > :nth-child(4n),
 div.phpdebugbar ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item:nth-child(even),
-div.phpdebugbar .hljs,
 div.phpdebugbar div.phpdebugbar-widgets-sqlqueries table.phpdebugbar-widgets-params th,
 div.phpdebugbar-openhandler .phpdebugbar-openhandler-actions > a,
 div.phpdebugbar-openhandler .phpdebugbar-openhandler-actions button,
@@ -95,9 +93,8 @@ div.phpdebugbar div.phpdebugbar-widgets-messages div.phpdebugbar-widgets-toolbar
 
 div.phpdebugbar .phpdebugbar-indicator span.phpdebugbar-tooltip,
 div.phpdebugbar div.phpdebugbar-mini-design a.phpdebugbar-tab:hover span.phpdebugbar-text,
-div.phpdebugbar pre.sf-dump,
-div.phpdebugbar .hljs,
-div.phpdebugbar code.phpdebugbar-widgets-sql span.hljs-operator {
+div.phpdebugbar pre.sf-dump
+{
     color: var(--color-gray-100);
 }
 
@@ -117,9 +114,6 @@ div.phpdebugbar div.phpdebugbar-mini-design a.phpdebugbar-tab:hover span.phpdebu
     background: var(--color-gray-900);
 }
 
-div.phpdebugbar .hljs-tag .hljs-value,
-div.phpdebugbar .hljs-phpdoc,
-div.phpdebugbar .tex .hljs-formula,
 div.phpdebugbar div.phpdebugbar-widgets-exceptions li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-message {
     color: var(--color-red-vivid);
 }
@@ -245,47 +239,58 @@ div.phpdebugbar a.phpdebugbar-close-btn {
  * @author Zeno Rocha <hi@zenorocha.com>
  */
 
-div.phpdebugbar .hljs-built_in,
-div.phpdebugbar .hljs-selector-tag,
-div.phpdebugbar .hljs-section,
-div.phpdebugbar .hljs-link {
-    color: #8be9fd;
+div.phpdebugbar pre code.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 1em
 }
 
-div.phpdebugbar .hljs-keyword {
-    color: #ff79c6;
+div.phpdebugbar code.hljs {
+    padding: 3px 5px
 }
 
-div.phpdebugbar .hljs,
-div.phpdebugbar .hljs-subst {
-    color: #f8f8f2;
+div.phpdebugbar .hljs {
+    color: #a9b7c6;
+    /*background: #282b2e;*/
+    background: transparent;
 }
 
-div.phpdebugbar .hljs-title {
-    color: #50fa7b;
+div.phpdebugbar .hljs-bullet, div.phpdebugbar .hljs-literal, div.phpdebugbar .hljs-number, div.phpdebugbar .hljs-symbol {
+    color: #6897bb
 }
 
-div.phpdebugbar .hljs-string,
-div.phpdebugbar .hljs-meta,
-div.phpdebugbar .hljs-name,
-div.phpdebugbar .hljs-type,
-div.phpdebugbar .hljs-attr,
-div.phpdebugbar .hljs-symbol,
-div.phpdebugbar .hljs-bullet,
-div.phpdebugbar .hljs-addition,
-div.phpdebugbar .hljs-variable,
-div.phpdebugbar .hljs-template-tag,
-div.phpdebugbar .hljs-template-variable {
-    color: #f1fa8c;
+div.phpdebugbar .hljs-deletion, div.phpdebugbar .hljs-keyword, div.phpdebugbar .hljs-selector-tag {
+    color: #cc7832
 }
 
-div.phpdebugbar .hljs-comment,
-div.phpdebugbar .hljs-quote,
-div.phpdebugbar .hljs-deletion {
-    color: #6272a4;
+div.phpdebugbar .hljs-link, div.phpdebugbar .hljs-template-variable, div.phpdebugbar .hljs-variable {
+    color: #629755
 }
 
-div.phpdebugbar .hljs-literal,
-div.phpdebugbar .hljs-number {
-    color: #bd93f9;
+div.phpdebugbar .hljs-comment, div.phpdebugbar .hljs-quote {
+    color: grey
+}
+
+div.phpdebugbar .hljs-meta {
+    color: #bbb529
+}
+
+div.phpdebugbar .hljs-addition, div.phpdebugbar .hljs-attribute, div.phpdebugbar .hljs-string {
+    color: #6a8759
+}
+
+div.phpdebugbar .hljs-section, div.phpdebugbar .hljs-title, div.phpdebugbar .hljs-type {
+    color: #ffc66d
+}
+
+div.phpdebugbar .hljs-name, div.phpdebugbar .hljs-selector-class, div.phpdebugbar .hljs-selector-id {
+    color: #e8bf6a
+}
+
+div.phpdebugbar .hljs-emphasis {
+    font-style: italic
+}
+
+div.phpdebugbar .hljs-strong {
+    font-weight: 700
 }

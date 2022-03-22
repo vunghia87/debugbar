@@ -1,6 +1,13 @@
 <?php
 
-class GlobalCache {
+namespace DebugBar\Partner;
+
+use Helper;
+use Memcached;
+use Memcache;
+use StringHelper;
+
+class ProxyGlobalCache {
 
     /** @var Memcache|Memcached */
     private static $memcache = null;
@@ -110,6 +117,7 @@ class GlobalCache {
      */
     public static function delete($key) {
         self::load();
+        event()->dispatch('cache.delete', ['cache.delete', $key]);
         return self::$memcache->delete( $key );
     }
 

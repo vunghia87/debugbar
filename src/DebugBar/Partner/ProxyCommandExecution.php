@@ -1,10 +1,10 @@
 <?php
 
-namespace BeSmartee\Utils;
+namespace DebugBar\Partner;
 
 use BeSmartee\Utils\Validation\ValidationInterface;
 
-class CommandExecution
+class ProxyCommandExecution
 {
     private $command;
     private $args = [];
