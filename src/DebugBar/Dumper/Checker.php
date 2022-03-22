@@ -2,7 +2,7 @@
 
 namespace DebugBar\Dumper;
 
-class DumperCheck
+class Checker
 {
     protected static $instance = null;
     protected static $current = 0;

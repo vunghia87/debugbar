@@ -2,7 +2,7 @@
 
 namespace DebugBar\Dumper;
 
-class DumperFrame
+class Framer
 {
     protected $debugBacktrace;
     protected $backtraceExcludePaths = [];
@@ -120,8 +120,8 @@ class DumperFrame
             $mime = end($endArr);
 
             $html .= strtr(
-                '<li onClick=":click" class="stack-frame :active"><span class="stack-frame-number">:index</span><div class="stack-frame-text"><span class="stack-frame-header">:file</span><span class="stack-frame-class">:class:type:function:args</span></div><div class="stack-frame-line"> ::line</div></li>', [
-                ':click' => "show(this,{$key})",
+                '<li class="stack-frame :active" key=":key"><span class="stack-frame-number">:index</span><div class="stack-frame-text"><span class="stack-frame-header">:file</span><span class="stack-frame-class">:class:type:function:args</span></div><div class="stack-frame-line"> ::line</div></li>', [
+                ':key' => $key,
                 ':active' => $key == 0 ? 'active' : '',
                 ':index' => ++$key,
                 ':class' => $class,
@@ -136,10 +136,10 @@ class DumperFrame
 
         foreach ($debugBacktrace as $key => $value) {
             $lines = '<div class="stack-lines">';
-            $code = strtr('<pre class="stack-code" id="content-:key"><code lang=":lang">', [":key" => $key, ":lang" => $mime]);
+            $code = strtr('<pre class="stack-code" key=":key"><code lang=":lang">', [":key" => $key, ":lang" => $mime]);
             foreach ($value['lines'] as $index => $line) {
                 $lines .= strtr('<p class="stack-line"> <a target="_blank" href=":editorHref">:index </a></p>',[
-                    ":index" => $value['start'] + $index,
+                    ":index" => $value['start'] + $index + 122,
                     ":editorHref" => $this->getEditorHref($value['file'], (int)$value['line'])
                 ]);
                 $code .= strtr('<p class="stack-code-line :current">:line</p>', [
@@ -150,7 +150,7 @@ class DumperFrame
             $lines .= "</div>";
             $code .= '</code></pre>';
 
-            $html .= strtr('<div class="stack-content stack-viewer :hidden" id=":key"><div class="stack-ruler">:lines</div>:code</div>', [
+            $html .= strtr('<div class="stack-viewer :hidden" key=":key"><div class="stack-ruler">:lines</div>:code</div>', [
                 ':hidden' => $key != 0 ? 'stack-hidden' : '',
                 ':key' => "dump-{$key}",
                 ':code' => $code,
@@ -208,7 +208,7 @@ class DumperFrame
         $style = "<style>
             *{margin: 0;padding:0}
             .stack {font-family: monospace;display: grid;align-items: stretch;grid-template: calc(100vh - 1rem) / 29rem 1fr}
-            .stack-nav{padding: 0;background: rgb(38 38 50);border-bottom-width: 0;border-right: 1px solid;overflow: hidden;height: 100%;border-color: #4b4b55;display: grid; grid-template: auto 1fr / 100%;position: relative;}
+            .stack-nav{padding: 0;background: #262632;border-bottom-width: 0;border-right: 1px solid;overflow: hidden;height: 100%;border-color: #4b4b55;display: grid; grid-template: auto 1fr / 100%;position: relative;}
             .stack-frames-scroll{position: absolute;top: 0;right: 0;bottom: 0;left: 0;overflow-x: hidden;overflow-y: auto}
             .stack-frame{cursor: pointer;transition: all 0.1s ease;display: grid; align-items: flex-end;grid-template-columns: 3rem 1fr auto;border-bottom: 1px solid; border-color: #4b4b55;background-color: #262632;}
             .stack-frame.active{background-color: #3c2e60;z-index: 10;}
@@ -216,11 +216,11 @@ class DumperFrame
             .stack-frame-number{padding:0.5rem;color: #7e6ba7;font-feature-settings: 'tnum';font-variant-numeric: tabular-nums;text-align: center}
             .stack-frame-text{display: grid;align-items: center;grid-gap: 0.5rem; border-left: 2px solid;padding-left: 0.75rem;padding-top: 0.5rem;padding-bottom: 0.5rem;color: #d8d8df;border-color: #4b4b55}
             .stack-frame-header{margin-right: -20rem;width: 100%;justify-content: flex-start;align-items: baseline;display: inline-block;line-height: 1.25;word-break: break-word;}
-            .stack-frame-class{display: inline-block;line-height: 1.25;color: #f0f0f58c;}
+            .stack-frame-class{display: inline-block;line-height: 1.25;color: #f0f0f58c;word-break: break-all;}
             .stack-frame-line{margin: 0.5rem 0.5rem 0.5rem 0.25rem;padding:0.2rem;text-align: right;line-height: 1.25;display: inline-block;background-color: #f0f0f50d;color: #f0f0f58c;font-size: 0.75rem}
             .stack-main{display: grid;height: 100%;overflow: hidden;background-color: #30303a;grid-template: auto 1fr / 100%;position: relative}
             .stack-main-content{overflow: hidden;}
-            .stack-viewer{position: absolute; top: 0;right: 0;bottom: 0;left: 0;overflow: auto;background-color: #262632;font-size: 0.75rem;display: flex}
+            .stack-viewer{position: absolute; top: 0;right: 0;bottom: 0;left: 0;overflow: auto;background-color: #262632;font-size: 0.8rem;display: flex}
             .stack-ruler{position: sticky;flex: none;left: 0;z-index: 20;}
             .stack-lines{min-height: 100%;border-right: 1px solid; border-color: #eeeef5;background-color: #30303a;padding-top: 1rem; padding-bottom: 1rem; -webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
             .stack-line{padding-left: 0.5rem;padding-right: 0.5rem;color: #f0f0f58c;line-height: 2;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;cursor: pointer;}
@@ -234,31 +234,35 @@ class DumperFrame
             .stack-hidden{display: none}
         </style>";
 
-        $script = "<script>
-            function show(event, id) {
-               var frame = document.querySelectorAll('.stack-frame');
-               var content = document.querySelectorAll('.stack-content');
-            
-                for (var i = 0; i < frame.length; i++) {
-                    frame[i].classList.remove('active');
-                    content[i].classList.add('stack-hidden');
-                }
-                
-                event.classList.add('active');
-                document.getElementById('dump-'+id).classList.remove('stack-hidden'); 
-                
-                var current = document.getElementById('content-'+id);
-                var lang = current.getAttribute('lang') ?? 'php';
-                var codes = current.querySelectorAll('code > p');
-                var j = 0, length = codes.length;
-             
-                for ( j; j < length; j++) {
-                     var codeHtml = hljs.highlight(lang,codes[j].innerText).value;
-                     codes[j].innerHTML = codeHtml;
+        $script = '<script>
+            var frames = document.getElementsByClassName("stack-frame");
+            for (var i = 0; i < frames.length; i++) {
+                frames[i].addEventListener("click", function(event) {
+                    var element = event.currentTarget;
+                    var stack = element.closest(".stack");
+                    var frame = stack.querySelectorAll(".stack-frame");
+                    var content = stack.querySelectorAll(".stack-viewer");
+                    for (var i = 0; i < frame.length; i++) {
+                        frame[i].classList.remove("active");
+                        content[i].classList.add("stack-hidden");
+                    }
+                    var id = element.getAttribute("key");
+                    element.classList.add("active");
+                    var current = stack.querySelector(`[key="dump-${id}"]`);
+                    current.classList.remove("stack-hidden");
+                    var lang = current.getAttribute("lang") ?? "php";
+                    var codes = current.querySelectorAll("code > p");
+                    var j = 0, length = codes.length;
+                    for ( j; j < length; j++) {
+                         var codeHtml = hljs.highlight(lang,codes[j].innerText).value;
+                         codes[j].innerHTML = codeHtml;
+                    }
+                });
+                if(i == 0){
+                    frames[i].click()
                 }
             }
-            show(document.getElementById('content-0'),0)
-        </script>";
+        </script>';
 
         //read https://highlightjs.org/
         $vendor = '<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/androidstudio.min.css">';

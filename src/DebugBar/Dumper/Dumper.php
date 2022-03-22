@@ -9,7 +9,7 @@ class Dumper
     protected $methods = [];
     protected $styles = [
         'html' => [
-            "pre" => "background-color:#232525;font: 13px monospace;line-height:1.2em;padding:3px 10px;text-align:left;color:#b9b5b8;margin:0;border-bottom:1px solid #464646;white-space:pre-wrap;word-wrap: break-word;",
+            "pre" => "background-color:#262632;font: 13px monospace;line-height:1.2em;padding:3px 10px;text-align:left;color:#b9b5b8;margin:0;border-bottom:1px solid #464646;white-space:pre-wrap;word-wrap: break-word;",
         ],
     ];
     protected $filters = \ReflectionProperty::IS_PUBLIC;

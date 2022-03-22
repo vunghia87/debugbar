@@ -1,8 +1,8 @@
 <?php
 
 use DebugBar\Dumper\Dumper;
-use DebugBar\Dumper\DumperCheck;
-use DebugBar\Dumper\DumperFrame;
+use DebugBar\Dumper\Checker;
+use DebugBar\Dumper\Framer;
 
 if (!function_exists('xdump')) {
     function xdump($var, ...$moreVars)
@@ -12,7 +12,7 @@ if (!function_exists('xdump')) {
             ->filter(false)
             ->onlyVar(true)
             ->depth(2);
-        if ($var instanceof DumperCheck) {
+        if ($var instanceof Checker) {
             foreach ($moreVars as $value) {
                 if ($var::check()) {
                     continue;
@@ -33,7 +33,7 @@ if (!function_exists('xx')) {
     function xx($var, ...$moreVars)
     {
         xdump($var, ...$moreVars);
-        echo new DumperFrame(debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS));
+        echo new Framer(debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS));
         exit(1);
     }
 }
@@ -46,7 +46,7 @@ if (!function_exists('xxx')) {
             ->filter(false)
             ->onlyVar(false)
             ->depth(3);
-        if ($var instanceof DumperCheck) {
+        if ($var instanceof Checker) {
             foreach ($moreVars as $value) {
                 if ($var::check()) {
                     continue;
@@ -60,7 +60,7 @@ if (!function_exists('xxx')) {
                 echo $dumper->dump($value);
             }
         }
-        echo new DumperFrame(debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS));
+        echo new Framer(debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS));
         exit(1);
     }
 }
@@ -78,7 +78,7 @@ if (!function_exists('xe')) {
         ];
         $trace = $e->getTrace();
         array_unshift($trace, $ex);
-        echo new DumperFrame($trace);
+        echo new Framer($trace);
         exit(1);
     }
 }
@@ -86,13 +86,13 @@ if (!function_exists('xe')) {
 if (!function_exists('skip')) {
     function skip($skip)
     {
-        return DumperCheck::skip($skip);
+        return Checker::skip($skip);
     }
 }
 
 if (!function_exists('when')) {
     function when($skip)
     {
-        return DumperCheck::when($skip);
+        return Checker::when($skip);
     }
 }
