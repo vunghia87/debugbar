@@ -19,7 +19,7 @@ class AuthCollector extends DataCollector implements Renderable
 
     public function collect()
     {
-        $auth = \DebugBar\Partner\AuthPartner::getAuth();
+        $auth = \DebugBar\Loader\AuthGlobal::getAuth();
 
         if (empty($auth)) {
             return ['Guest'];

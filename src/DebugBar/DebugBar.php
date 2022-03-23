@@ -220,7 +220,8 @@ class DebugBar implements ArrayAccess
             $request_variables = array(
                 'method' => isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : null,
                 'uri' => isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null,
-                'ip' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null
+                'ip' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null,
+                'action' => isset($_REQUEST['action']) ? $_REQUEST['action'] : null,
             );
         }
         $this->data = array(

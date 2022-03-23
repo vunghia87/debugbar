@@ -2,6 +2,7 @@
 
 namespace DebugBar;
 
+use DebugBar\Loader\AliasLoader;
 use DebugBar\Supports\Macroable;
 use Exception;
 
@@ -95,6 +96,8 @@ class AdvanceDebugBar extends DebugBar
         if ($this->booted) {
             return;
         }
+
+        $this->loader();
 
         /** @var \DebugBar\AdvanceDebugBar $debugbar */
         $debugbar = $this;
@@ -412,7 +415,9 @@ class AdvanceDebugBar extends DebugBar
         $pdo = new \DebugBar\DataCollector\PDO\TraceablePDO($conn);
         $pdo->setFindSource(true);
 
-        $queryCollector = new \DebugBar\DataCollector\PDO\QueryColllector($pdo);
+        $skip = $this->config['options']['db']['skip'] ?? [];
+        $listen = $this->config['options']['db']['listen'] ?? [];
+        $queryCollector = new \DebugBar\DataCollector\PDO\QueryColllector($pdo, null, $skip, $listen);
         $queryCollector->setDataFormatter(new \DebugBar\DataFormatter\QueryFormatter());
         $queryCollector->setRenderSqlWithParams(true,"'");
         $queryCollector->setShowHints(false);
@@ -447,6 +452,22 @@ class AdvanceDebugBar extends DebugBar
             /** @var \DebugBar\DataCollector\ExceptionsCollector $collector */
             $collector = $this->getCollector('exceptions');
             $collector->addThrowable($e);
+        }
+    }
+
+    /**
+     * @return void
+     */
+    protected function loader()
+    {
+        $loader = AliasLoader::getInstance([
+            \DebugBar\Loader\ProxyGlobalCache::class => \GlobalCache::class,
+            \DebugBar\Loader\ProxyNewRelic::class => \NewRelic::class,
+            \DebugBar\Loader\ProxyCommandExecution::class => \BeSmartee\Utils\CommandExecution::class,
+        ]);
+
+        foreach ($loader->getAliases() as $alias) {
+            $loader->load($alias);
         }
     }
 

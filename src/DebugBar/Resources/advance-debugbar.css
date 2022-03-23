@@ -47,6 +47,10 @@ div.phpdebugbar-openhandler .phpdebugbar-openhandler-actions button {
     font-size: 13px;
 }
 
+div.phpdebugbar-openhandler table{
+    color: #fff;
+}
+
 div.phpdebugbar-openhandler .phpdebugbar-openhandler-actions > form {
     margin: 15px 0px 5px;
     text-transform: uppercase;

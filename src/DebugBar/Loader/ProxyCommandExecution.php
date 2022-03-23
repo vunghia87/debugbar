@@ -1,6 +1,6 @@
 <?php
 
-namespace DebugBar\Partner;
+namespace DebugBar\Loader;
 
 use BeSmartee\Utils\Validation\ValidationInterface;
 

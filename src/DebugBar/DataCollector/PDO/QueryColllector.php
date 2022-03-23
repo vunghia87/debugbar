@@ -3,6 +3,7 @@
 namespace DebugBar\DataCollector\PDO;
 
 use DebugBar\DataCollector\TimeDataCollector;
+use DebugBar\Supports\Utils;
 
 class QueryColllector extends PDOCollector
 {
@@ -18,20 +19,22 @@ class QueryColllector extends PDOCollector
     {
         $this->showHints = $enabled;
     }
-
     /**
      * @param TracedStatement $stmt
-     * @return array
+     * @return array|void
      */
     public function addQuery(\DebugBar\DataCollector\PDO\TracedStatement $stmt)
     {
         $query = $this->renderSqlWithParams ? $stmt->getSqlWithParams($this->sqlQuotationChar) : $stmt->getSql();
-
+        foreach ($this->skip as $skip) {
+            preg_match('/\s+from\s+`?([a-z\d_]+)`?/i', strtolower($query), $matches);
+            if (!empty($matches[0]) && strpos($query, $skip) || $skip == $query) {
+                return [];
+            }
+        }
         $hints = $this->performQueryAnalysis($query);
-
         $source = array_values($stmt->getDebugTrace());
-
-        return array(
+        $item = array(
             'sql' => $this->getDataFormatter()->formatSql($query),
             'row_count' => $stmt->getRowCount(),
             'stmt_id' => $stmt->getPreparedId(),
@@ -47,8 +50,17 @@ class QueryColllector extends PDOCollector
             'error_code' => $stmt->getErrorCode(),
             'error_message' => $stmt->getErrorMessage(),
             'hints' => $this->showHints ? $hints : null,
+            'match' => false,
             'backtrace' => $source,
         );
+
+        foreach ($this->listen as $listen) {
+            if (strpos($query, $listen)) {
+                $item['match'] = true;
+            }
+        }
+
+        return $item;
     }
     
     /**
@@ -112,9 +124,11 @@ class QueryColllector extends PDOCollector
         $stmts = array();
         /** @var \DebugBar\DataCollector\PDO\TracedStatement $stmt */
         foreach ($pdo->getExecutedStatements() as $stmt) {
-            $stmts[] = $this->addQuery($stmt);
-            if ($timeCollector !== null) {
-                $timeCollector->addMeasure($stmt->getSql(), $stmt->getStartTime(), $stmt->getEndTime(), array(), $connectionName);
+            if (!empty($item = $this->addQuery($stmt))) {
+                $stmts[] = $item;
+                if ($timeCollector !== null) {
+                    $timeCollector->addMeasure($stmt->getSql(), $stmt->getStartTime(), $stmt->getEndTime(), array(), $connectionName);
+                }
             }
         }
 

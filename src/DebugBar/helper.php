@@ -1,7 +1,6 @@
 <?php
 
 require __DIR__ . '/Dumper/dump.php';
-require __DIR__ . '/Partner/partner.php';
 
 if (!function_exists('event')) {
     function event()

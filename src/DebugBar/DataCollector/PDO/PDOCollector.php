@@ -13,20 +13,21 @@ use DebugBar\DataCollector\TimeDataCollector;
 class PDOCollector extends DataCollector implements Renderable, AssetProvider
 {
     protected $connections = array();
-
     protected $timeCollector;
-
     protected $renderSqlWithParams = false;
-
     protected $sqlQuotationChar = '<>';
+    protected $skip = [];
+    protected $listen = [];
 
     /**
      * @param \PDO $pdo
      * @param TimeDataCollector $timeCollector
      */
-    public function __construct(\PDO $pdo = null, TimeDataCollector $timeCollector = null)
+    public function __construct(\PDO $pdo = null, TimeDataCollector $timeCollector = null, array $skip = [], array $listen = [])
     {
         $this->timeCollector = $timeCollector;
+        $this->skip = $skip;
+        $this->listen = $listen;
         if ($pdo !== null) {
             $this->addConnection($pdo, 'default');
         }
@@ -137,8 +138,9 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         }
         $stmts = array();
         foreach ($pdo->getExecutedStatements() as $stmt) {
+            $sql = $this->renderSqlWithParams ? $stmt->getSqlWithParams($this->sqlQuotationChar) : $stmt->getSql();
             $stmts[] = array(
-                'sql' => $this->renderSqlWithParams ? $stmt->getSqlWithParams($this->sqlQuotationChar) : $stmt->getSql(),
+                'sql' => $sql,
                 'row_count' => $stmt->getRowCount(),
                 'stmt_id' => $stmt->getPreparedId(),
                 'prepared_stmt' => $stmt->getSql(),

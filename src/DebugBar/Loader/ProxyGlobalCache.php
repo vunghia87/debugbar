@@ -1,6 +1,6 @@
 <?php
 
-namespace DebugBar\Partner;
+namespace DebugBar\Loader;
 
 use Helper;
 use Memcached;

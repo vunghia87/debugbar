@@ -52,6 +52,7 @@
             this.$list = new PhpDebugBar.Widgets.ListWidget({
                 itemRenderer: function (li, stmt) {
                     this.$sql = $('<div />').addClass(csscls('sql')).addClass(csscls('ellipsis')).text(stmt.sql).appendTo(li);
+
                     if (stmt.duration_str) {
                         $('<span title="Duration" />').addClass(csscls('duration')).text(stmt.duration_str).appendTo(li);
                     }
@@ -71,6 +72,9 @@
                     if (typeof (stmt.is_success) != 'undefined' && !stmt.is_success) {
                         li.addClass(csscls('error'));
                         li.append($('<span />').addClass(csscls('error')).text("[" + stmt.error_code + "] " + stmt.error_message));
+                    }
+                    if (typeof (stmt.match) != 'undefined' && stmt.match) {
+                        li.addClass(csscls('matching'));
                     }
                     $('<span title="Copy to clipboard" />')
                         .addClass(csscls('copy-clipboard'))

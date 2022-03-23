@@ -110,3 +110,7 @@ div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-toolbar a.phpdebugbar
   background: #eee;
   color: #888;
 }
+
+div.phpdebugbar-widgets-sqlqueries .phpdebugbar-widgets-matching {
+  background-color: #63af1173 !important;
+}

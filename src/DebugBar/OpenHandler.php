@@ -83,7 +83,7 @@ class OpenHandler
         }
 
         $filters = array();
-        foreach (array('utime', 'datetime', 'ip', 'uri', 'method') as $key) {
+        foreach (array('utime', 'datetime', 'ip', 'uri', 'method', 'action') as $key) {
             if (isset($request[$key])) {
                 $filters[$key] = $request[$key];
             }

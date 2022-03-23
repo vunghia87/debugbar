@@ -297,7 +297,7 @@ class Dumper
         static::$isHeaderDumped = true;
 
         $style = '<style>
-            .dump{cursor: pointer;color:#fd8b19!important}
+            .dump{cursor: pointer;color:#b7aadb!important}
             .dump:hover{font-weight: bold}
             .dump:after{content: \'▼\'}
             .dump + span{}
@@ -310,7 +310,7 @@ class Dumper
             .null{color:#fff}
             .num{color:#ffb939}
             .obj{color:#fdcc59}
-            .method{color:#1290bf}
+            .method{color:#cc7832}
             .variable{color:#7ec699}
             .other{color:#fff}
             .res{color:#6a8759}

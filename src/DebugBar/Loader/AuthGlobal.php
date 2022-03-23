@@ -1,8 +1,8 @@
 <?php
 
-namespace DebugBar\Partner;
+namespace DebugBar\Loader;
 
-class AuthPartner
+class AuthGlobal
 {
     public static function getAuth()
     {

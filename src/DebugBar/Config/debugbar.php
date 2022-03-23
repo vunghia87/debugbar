@@ -126,5 +126,9 @@ return [
         'request' => [
             'shouldServer' => false
         ],
+        'db' => [
+            'skip' => [],
+            'listen' => []
+        ],
     ],
 ];

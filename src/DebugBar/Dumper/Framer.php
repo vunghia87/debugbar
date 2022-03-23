@@ -259,7 +259,6 @@ class Framer
                     }
                 });
                 if(i == 0) frames[i].click();
-               
             }
         </script>';
 
