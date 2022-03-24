@@ -244,16 +244,14 @@
                 if (data.memory_usage_str) {
                     this.$status.append($('<span title="Memory usage" />').addClass(csscls('memory')).text(data.memory_usage_str));
                 }
-
-                var filters = ['select', 'insert', 'update', 'delete', 'join', 'count', 'like', 'having', 'group by', 'order by', 'lender_configurations'];
-
                 this.$search.find('.' + csscls('filter')).remove();
+                var filters = ['select', 'insert', 'update', 'delete', 'join', 'count', 'like', 'having', 'group by', 'order by'];
 
-                for (var i = 0; i < filters.length; i++) {
+                for (var j = 0; j < filters.length; j++) {
                     $('<a />')
                         .addClass(csscls('filter'))
-                        .text(filters[i])
-                        .attr('rel', filters[i])
+                        .text(filters[j])
+                        .attr('rel', filters[j])
                         .on('click', function () {
                             self.onFilterClick(this);
                         })

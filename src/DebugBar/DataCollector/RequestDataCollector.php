@@ -211,8 +211,12 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
      */
     public function getAssets()
     {
-        $dumperAsset = $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : array();
-        return array_merge(['js' => 'widgets/requests/widget.js'], $dumperAsset);
+        return [
+            'js' => 'widgets/requests/widget.js'
+        ];
+        //move debugbar css + js
+        //$dumperAsset = $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : array();
+        //return array_merge(['js' => 'widgets/requests/widget.js'], $dumperAsset);
     }
 
     /**

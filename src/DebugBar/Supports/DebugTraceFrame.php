@@ -80,10 +80,10 @@ trait DebugTraceFrame
             'line' => $trace['line'] ?? '?',
         ];
 
-        if (isset($trace['file']) && !$this->fileIsInExcludedPath($trace['file'])) {
+        if (!empty($trace['file']) && !$this->fileIsInExcludedPath($trace['file'])) {
             $file = $trace['file'];
             $frame->name = $file;
-            $frame->editorHref = $this->getEditorHref($trace['file'], $trace['line']);
+            $frame->editorHref = $this->getEditorHref($trace['file'], (int)$trace['line']);
             return $frame;
         }
 
