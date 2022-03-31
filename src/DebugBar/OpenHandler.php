@@ -47,18 +47,20 @@ class OpenHandler
         $op = 'find';
         if (isset($request['op'])) {
             $op = $request['op'];
-            if (!in_array($op, array('find', 'get', 'clear'))) {
+            if (!in_array($op, array('find', 'get', 'clear', 'all', 'detail'))) {
                 throw new DebugBarException("Invalid operation '{$request['op']}'");
             }
         }
 
-        if ($sendHeader) {
+        if ($sendHeader && !in_array($request['op'], ['all', 'detail'])) {
             $this->debugBar->getHttpDriver()->setHeaders(array(
-                    'Content-Type' => 'application/json'
-                ));
+                'Content-Type' => 'application/json'
+            ));
+            $response = json_encode(call_user_func(array($this, $op), $request));
+        } else {
+            $response = call_user_func(array($this, $op), $request);
         }
 
-        $response = json_encode(call_user_func(array($this, $op), $request));
         if ($echo) {
             echo $response;
         }
@@ -82,14 +84,7 @@ class OpenHandler
             $offset = $request['offset'];
         }
 
-        $filters = array();
-        foreach (array('utime', 'datetime', 'ip', 'uri', 'method', 'action') as $key) {
-            if (isset($request[$key])) {
-                $filters[$key] = $request[$key];
-            }
-        }
-
-        return $this->debugBar->getStorage()->find($filters, $max, $offset);
+        return $this->debugBar->getStorage()->find($request, $max, $offset);
     }
 
     /**
@@ -113,5 +108,24 @@ class OpenHandler
     {
         $this->debugBar->getStorage()->clear();
         return array('success' => true);
+    }
+
+    protected function all($request)
+    {
+        $request['type'] = $request['type'] ?? 'request';
+        $data = $this->find($request);
+        ob_start();
+        include  __DIR__ . '/Viewer/all.php';
+        return ob_get_clean();
+    }
+
+
+    public function detail($request)
+    {
+        $data = $this->get($request);
+        xdump($data);
+        ob_start();
+        include  __DIR__ . '/Viewer/detail.php';
+        return ob_get_clean();
     }
 }

@@ -3,7 +3,7 @@
 namespace DebugBar\DataCollector\PDO;
 
 use DebugBar\DataCollector\TimeDataCollector;
-use DebugBar\Supports\Utils;
+use DebugBar\DataCollector\PDO\TracedStatement;
 
 class QueryColllector extends PDOCollector
 {
@@ -23,7 +23,7 @@ class QueryColllector extends PDOCollector
      * @param TracedStatement $stmt
      * @return array|void
      */
-    public function addQuery(\DebugBar\DataCollector\PDO\TracedStatement $stmt)
+    public function addQuery(TracedStatement $stmt)
     {
         $query = $this->renderSqlWithParams ? $stmt->getSqlWithParams($this->sqlQuotationChar) : $stmt->getSql();
         foreach ($this->skip as $skip) {
@@ -32,7 +32,8 @@ class QueryColllector extends PDOCollector
                 return [];
             }
         }
-        $hints = $this->performQueryAnalysis($query);
+
+        $hints = $this->showHints ? $this->performQueryAnalysis($query) : null;
         $source = array_values($stmt->getDebugTrace());
         $item = array(
             'sql' => $this->getDataFormatter()->formatSql($query),
@@ -49,7 +50,7 @@ class QueryColllector extends PDOCollector
             'is_success' => $stmt->isSuccess(),
             'error_code' => $stmt->getErrorCode(),
             'error_message' => $stmt->getErrorMessage(),
-            'hints' => $this->showHints ? $hints : null,
+            'hints' => $hints,
             'match' => false,
             'backtrace' => $source,
         );

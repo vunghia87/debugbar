@@ -238,14 +238,13 @@ class AdvanceDebugBar extends DebugBar
     public function modifyResponse()
     {
         ob_start(function ($content) {
-
             if ($this->shouldCollect('response', false)) {
                 $this->addCollector(new \DebugBar\DataCollector\ResponseCollector($content));
             }
 
             $this->sendDataInHeaders(true);
 
-            if (stripos($content, '</body>') === false) {
+            if (!empty($this->config['watch']) || stripos($content, '</body>') === false) {
                 return $content;
             }
 

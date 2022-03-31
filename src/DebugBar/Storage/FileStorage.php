@@ -68,18 +68,29 @@ class FileStorage implements StorageInterface
         //Load the metadata and filter the results.
         $results = array();
         $i = 0;
-        foreach ($files as $file) {
+        foreach ($files as $index => $file) {
             //When filter is empty, skip loading the offset
             if ($i++ < $offset && empty($filters)) {
                 $results[] = null;
                 continue;
             }
             $data = $this->get($file['id']);
-            $meta = $data['__meta'];
-            unset($data);
-            if ($this->filter($meta, $filters)) {
-                $results[] = $meta;
+            if (!isset($filters['type'])) {
+                $type = '__meta';
+                $meta = $data[$type];
+                unset($data);
+                if ($this->filter($meta, $filters)) {
+                    $results[] = $meta;
+                }
+            } else {
+                $results[$index]['__meta'] = $data['__meta'];
+                $meta = $data[$filters['type']];
+                unset($data);
+                if ($this->filter($meta, $filters)) {
+                    $results[$index]['response'] = $meta;
+                }
             }
+
             if (count($results) >= ($max + $offset)) {
                 break;
             }
@@ -98,7 +109,10 @@ class FileStorage implements StorageInterface
     protected function filter($meta, $filters)
     {
         foreach ($filters as $key => $value) {
-            if (!isset($meta[$key]) || fnmatch($value, $meta[$key]) === false) {
+            if (!isset($meta[$key])) {
+                continue;
+            }
+            if (fnmatch($value, $meta[$key]) === false) {
                 return false;
             }
         }

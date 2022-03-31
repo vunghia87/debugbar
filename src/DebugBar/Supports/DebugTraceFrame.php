@@ -76,13 +76,12 @@ trait DebugTraceFrame
         $frame = (object)[
             'index' => $index,
             'namespace' => null,
-            'name' => null,
+            'file' => null,
             'line' => $trace['line'] ?? '?',
         ];
 
         if (!empty($trace['file']) && !$this->fileIsInExcludedPath($trace['file'])) {
-            $file = $trace['file'];
-            $frame->name = $file;
+            $frame->file = $trace['file'];
             $frame->editorHref = $this->getEditorHref($trace['file'], (int)$trace['line']);
             return $frame;
         }

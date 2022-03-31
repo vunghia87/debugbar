@@ -45,7 +45,7 @@ class Framer
     {
         $result = [];
         foreach ($this->debugBacktrace as $index => $trace){
-            if(!isset($trace['file']) || $this->fileIsInExcludedPath($trace['file'])){
+            if($this->fileIsInExcludedPath($trace['file'])){
                 continue;
             }
 
@@ -226,7 +226,6 @@ class Framer
             .stack-line{padding-left: 0.5rem;padding-right: 0.5rem;color: #f0f0f58c;line-height: 2;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;cursor: pointer;text-align: right}
             .stack-line a{color: #fff;text-decoration: none;}
             .stack-line:hover{background: #686861}
-            .stack-code{ flex-grow: 1;padding-top: 1rem;padding-bottom: 1rem;}
             .stack-code{ flex-grow: 1;padding-top: 1rem;padding-bottom: 1rem;}
             .stack-code-line{padding-left: 1rem;color: #d8d8df;line-height: 2;}
             .stack-code-line span{}

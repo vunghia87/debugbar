@@ -370,7 +370,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                                     $parts.push(source.namespace + '::');
                                 }
 
-                                $parts.push(source.name);
+                                $parts.push(source.file);
                                 $parts.push($span.clone().text(':' + source.line));
 
                                 if (source.editorHref) {

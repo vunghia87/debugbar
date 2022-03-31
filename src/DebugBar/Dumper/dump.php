@@ -11,7 +11,7 @@ if (!function_exists('xdump')) {
             ->type(in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) ? 'string' : 'html')
             ->filter(false)
             ->onlyVar(true)
-            ->depth(2);
+            ->depth(4);
         if ($var instanceof Checker) {
             foreach ($moreVars as $value) {
                 if ($var::check()) {

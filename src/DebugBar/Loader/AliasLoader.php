@@ -4,11 +4,7 @@ namespace DebugBar\Loader;
 
 class AliasLoader
 {
-    protected $aliases = [
-        \DebugBar\Loader\ProxyGlobalCache::class => \GlobalCache::class,
-        \DebugBar\Loader\ProxyNewRelic::class => \NewRelic::class,
-        \DebugBar\Loader\ProxyCommandExecution::class => \BeSmartee\Utils\CommandExecution::class,
-    ];
+    protected $aliases = [];
     protected $registered = false;
     protected static $instance;
 
