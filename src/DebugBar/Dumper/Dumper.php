@@ -16,6 +16,7 @@ class Dumper
     protected $onlyVar = true;
     protected $type = 'html'; // html, string, cli NOT_SUPPORT
     protected static $isHeaderDumped = false;
+    protected $renderHeader = true;
 
     public function depth(int $depth)
     {
@@ -46,6 +47,12 @@ class Dumper
     public function type(string $type)
     {
         $this->type = $type;
+        return $this;
+    }
+
+    public function renderHeader(bool $renderHeader)
+    {
+        $this->renderHeader = $renderHeader;
         return $this;
     }
 
@@ -164,6 +171,10 @@ class Dumper
 //            if (in_array(get_class($variable), $this->methods)) {
 //                return $output . " listed... }";
 //            }
+
+            if (in_array(get_class($variable), $this->methods) && is_a($variable, get_class($variable))) {
+                return $output . " parent instance... }";
+            }
 
             $debugClass = get_debug_type($variable);
             if ($debugClass === 'stdClass') {
@@ -290,7 +301,7 @@ class Dumper
 
     public function getDumpHeader()
     {
-        if (static::$isHeaderDumped) {
+        if (!$this->renderHeader || static::$isHeaderDumped) {
             return '';
         }
 
@@ -344,7 +355,7 @@ class Dumper
             }
         </script>";
 
-        return $style . $script . "<button style='position: fixed;right: 5px;top: 3px;z-index: 9999999;font-size: 11px;background: #000;color: #fff' onclick='collapseAll()'>Collapse</button></div>";
+        return $style . $script . "<button style='position: fixed;right: 5px;top: 3px;z-index: 9999999;font-size: 11px;background: #000;color: #fff' onclick='collapseAll()'>Collapse</button>";
     }
 
     public function sanitizeOutput($buffer) {

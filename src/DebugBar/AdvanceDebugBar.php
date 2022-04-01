@@ -56,9 +56,9 @@ class AdvanceDebugBar extends DebugBar
      */
     public static function getInstance()
     {
-        if (static::$instance === null) {
-            static::$instance = new static();
-            static::$instance->config = require __DIR__ . '/Config/debugbar.php';
+        if (self::$instance === null) {
+            self::$instance = new self();
+            self::$instance->config = require __DIR__ . '/Config/debugbar.php';
         }
 
         return self::$instance;
@@ -181,7 +181,7 @@ class AdvanceDebugBar extends DebugBar
         $this->shouldConnectDb();
 
         $renderer = $this->getJavascriptRenderer();
-        $renderer->setBaseUrl($this->config['assets_sites_url'] ?? '');
+        $renderer->setBaseUrl($this->getAssetPath());
 //        $renderer->setIncludeVendors(true);
 //        $renderer->setBindAjaxHandlerToFetch(true);
 //        $renderer->setBindAjaxHandlerToXHR(true);
@@ -230,6 +230,14 @@ class AdvanceDebugBar extends DebugBar
         $this->enabled = false;
     }
 
+    /**
+     * @return bool
+     */
+    public function watchable()
+    {
+        return isset($this->config['watchable']) && $this->config['watchable'] == 1;
+    }
+
     public function shouldCollect($name, $default = false)
     {
         return $this->config['collectors'][$name] ?? $default;
@@ -242,9 +250,14 @@ class AdvanceDebugBar extends DebugBar
                 $this->addCollector(new \DebugBar\DataCollector\ResponseCollector($content));
             }
 
+            if ($this->watchable()) {
+                $this->collect();
+                return $content;
+            }
+
             $this->sendDataInHeaders(true);
 
-            if (!empty($this->config['watch']) || stripos($content, '</body>') === false) {
+            if (stripos($content, '</body>') === false) {
                 return $content;
             }
 
@@ -430,6 +443,7 @@ class AdvanceDebugBar extends DebugBar
      *
      * @param mixed $message
      * @param string $label
+     * @throws Exception
      */
     public function addMessage($message, $label = 'info')
     {
@@ -444,6 +458,7 @@ class AdvanceDebugBar extends DebugBar
      * Adds an exception to be profiled in the debug bar
      *
      * @param Exception $e
+     * @throws Exception
      */
     public function addThrowable($e)
     {
@@ -465,9 +480,17 @@ class AdvanceDebugBar extends DebugBar
             \DebugBar\Loader\ProxyCommandExecution::class => \BeSmartee\Utils\CommandExecution::class,
         ]);
 
-        foreach ($loader->getAliases() as $alias) {
-            $loader->load($alias);
+        foreach ($loader->getAliases() as $class => $alias) {
+            $loader->load($class);
         }
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getAssetPath()
+    {
+        return $this->config['assets_sites_url'] ?? '';
     }
 
     /**

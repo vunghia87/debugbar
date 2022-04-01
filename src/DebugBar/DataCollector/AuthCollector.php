@@ -25,7 +25,7 @@ class AuthCollector extends DataCollector implements Renderable
             return ['Guest'];
         }
         $class = is_object($auth) ? get_class($auth) : 'Auth';
-        $auth = $this->getDataFormatter()->formatVar($auth);
+        $auth = $this->getVarDumper()->renderVar($auth);
         return [$class => $auth];
     }
 

@@ -5,7 +5,7 @@ return [
     'enabled' => getenv('DEBUGBAR_ENABLED') ?? null,
 
     // Only save collect data, not show debugBar on browser
-    'watch' => true,
+    'watchable' => true,
 
     // You can provide an array of URI's that must be ignored (eg. 'api/*')
     'except' => [

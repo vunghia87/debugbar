@@ -313,28 +313,3 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
     display:inline-block;
   }
 
-/*Dumper Css*/
-.dump{cursor: pointer;color:#b7aadb!important}
-.dump:hover{font-weight: bold}
-.dump:after{content: \'▼\'}
-.dump + span{}
-.dump.dump-show:after {content: \'▶\'}
-.dump.dump-show + span {display: none}
-.arr{color:#6897bb}
-.bool{color:#ff6868}
-.float{color:#ffb939}
-.int{color:#ffb939}
-.null{color:#fff}
-.num{color:#ffb939}
-.obj{color:#fdcc59}
-.method{color:#cc7832}
-.variable{color:#7ec699}
-.other{color:#fff}
-.res{color:#6a8759}
-.other{color:#fff}
-.str{color:#6a8759}
-.private{color:#d4b1c9}
-.protected{color:#f384d1}
-.public{color:#ff05b2}
-.static{color:#da3966}
-.pre{}

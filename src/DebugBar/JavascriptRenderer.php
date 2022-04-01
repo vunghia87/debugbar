@@ -38,12 +38,14 @@ class JavascriptRenderer
 
     protected $cssVendors = array(
         'fontawesome' => 'vendor/font-awesome/css/font-awesome.min.css',
-        'highlightjs' => 'vendor/highlightjs/styles/github.css'
+        'highlightjs' => 'vendor/highlightjs/styles/github.css',
+        'dumper' => 'vendor/dumper/dumper.css',
     );
 
     protected $jsVendors = array(
         'jquery' => 'vendor/jquery/dist/jquery.min.js',
-        'highlightjs' => 'vendor/highlightjs/highlight.pack.js'
+        'highlightjs' => 'vendor/highlightjs/highlight.pack.js',
+        'dumper' => 'vendor/dumper/dumper.js',
     );
 
     protected $includeVendors = true;

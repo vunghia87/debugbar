@@ -1,4 +1,4 @@
-<div class="col-2 sidebar">
+<div class="col-2 sidebar mt-3">
     <ul class="nav flex-column">
         <li class="nav-item">
             <a href="/requests" class="nav-link d-flex align-items-center pt-0">

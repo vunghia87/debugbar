@@ -73,15 +73,10 @@ trait DebugTraceFrame
      */
     public function parseTrace(int $index, array $trace)
     {
-        $frame = (object)[
-            'index' => $index,
-            'namespace' => null,
-            'file' => null,
-            'line' => $trace['line'] ?? '?',
-        ];
+        $frame = (object)$trace;
+        $frame->index = $index;
 
         if (!empty($trace['file']) && !$this->fileIsInExcludedPath($trace['file'])) {
-            $frame->file = $trace['file'];
             $frame->editorHref = $this->getEditorHref($trace['file'], (int)$trace['line']);
             return $frame;
         }

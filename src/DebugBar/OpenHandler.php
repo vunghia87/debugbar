@@ -113,6 +113,7 @@ class OpenHandler
     protected function all($request)
     {
         $request['type'] = $request['type'] ?? 'request';
+        $request['max'] = $request['max'] ?? 50;
         $data = $this->find($request);
         ob_start();
         include  __DIR__ . '/Viewer/all.php';
@@ -123,7 +124,6 @@ class OpenHandler
     public function detail($request)
     {
         $data = $this->get($request);
-        xdump($data);
         ob_start();
         include  __DIR__ . '/Viewer/detail.php';
         return ob_get_clean();

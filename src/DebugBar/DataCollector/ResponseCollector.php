@@ -43,7 +43,7 @@ class ResponseCollector extends DataCollector implements Renderable
         $contentType = explode(';', $contentType)[0];
 
         if ($this->isJson($this->content)) {
-            return [$contentType => $this->getDataFormatter()->formatVar(json_decode($this->content, true))];
+            return [$contentType => $this->getVarDumper()->renderVar(json_decode($this->content, true))];
         }
 
         return [$contentType => $this->parseContent($this->content)];

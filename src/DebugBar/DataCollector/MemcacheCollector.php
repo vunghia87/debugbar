@@ -80,7 +80,7 @@ class MemcacheCollector extends DataCollector implements Renderable, AssetProvid
 //            return get_class($value);
 //        }
 
-        return $this->getDataFormatter()->formatVar($value);
+        return $this->getVarDumper()->renderVar($value);
     }
 
     /**

@@ -6,11 +6,11 @@ class AliasLoader
 {
     protected $aliases = [];
     protected $registered = false;
-    protected static $instance;
+    private static $instance = null;
 
-    private function __construct($aliases)
+    private function __construct()
     {
-        $this->aliases = $aliases;
+
     }
 
     /**
@@ -19,21 +19,19 @@ class AliasLoader
      */
     public static function getInstance(array $aliases = [])
     {
-        if (is_null(static::$instance)) {
-            return static::$instance = new static($aliases);
+        if (self::$instance === null) {
+            self::$instance = new static();
         }
 
-        $aliases = array_merge(static::$instance->getAliases(), $aliases);
-
-        static::$instance->setAliases($aliases);
-
-        return static::$instance;
+        $aliases = array_merge(self::$instance->getAliases(), $aliases);
+        self::$instance->setAliases($aliases);
+        return self::$instance;
     }
 
-    public function load($alias)
+    public function load($class)
     {
-        if (isset($this->aliases[$alias])) {
-            return class_alias($this->aliases[$alias], $alias);
+        if (isset($this->aliases[$class])) {
+            return class_alias($class, $this->aliases[$class]);
         }
     }
 

@@ -133,14 +133,14 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         $messageHtml = null;
         if (!is_string($message)) {
             // Send both text and HTML representations; the text version is used for searches
-            $messageText = $this->getDataFormatter()->formatVar($message);
+            //$messageText = $this->getDataFormatter()->formatVar($message);
             if ($this->isHtmlVarDumperUsed()) {
                 $messageHtml = $this->getVarDumper()->renderVar($message);
             }
             $isString = false;
         }
         $item = array(
-            'message' => $messageText,
+            //'message' => $messageText,
             'message_html' => $messageHtml,
             'is_string' => $isString,
             'label' => $label,
@@ -148,7 +148,8 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         );
 
         if ($this->shouldTrace) {
-            $this->debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS | DEBUG_BACKTRACE_PROVIDE_OBJECT);
+            $debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS | DEBUG_BACKTRACE_PROVIDE_OBJECT, 10);
+            $this->debugBacktrace = array_splice($debugBacktrace, 2, 8);
             $item['backtrace'] = $this->getDebugTrace();
         }
 

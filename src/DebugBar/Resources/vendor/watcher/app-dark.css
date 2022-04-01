@@ -12,6 +12,32 @@
     background: #555;
 }
 
+/*Dumper Css*/
+.dump{cursor: pointer;color:#b7aadb!important}
+.dump:hover{font-weight: bold}
+.dump:after{content: '▼'}
+.dump + span{}
+.dump.dump-show:after {content: '▶'}
+.dump.dump-show + span {display: none}
+.arr{color:#6897bb}
+.bool{color:#ff6868}
+.float{color:#ffb939}
+.int{color:#ffb939}
+.null{color:#fff}
+.num{color:#ffb939}
+.obj{color:#fdcc59}
+.method{color:#cc7832}
+.variable{color:#7ec699}
+.other{color:#fff}
+.res{color:#6a8759}
+.other{color:#fff}
+.str{color:#6a8759}
+.private{color:#d4b1c9}
+.protected{color:#f384d1}
+.public{color:#ff05b2}
+.static{color:#da3966}
+.pre{}
+
 /*!
  * Bootstrap v4.5.0 (https://getbootstrap.com/)
  * Copyright 2011-2020 The Bootstrap Authors
@@ -166,7 +192,7 @@ a {
 
 a:hover {
     color: #6161ff;
-    text-decoration: underline
+    text-decoration: none
 }
 
 a:not([href]), a:not([href]):hover {
@@ -405,7 +431,7 @@ hr {
 }
 
 .small, small {
-    font-size: 80%;
+    font-size: 90%;
     font-weight: 400
 }
 
@@ -4349,7 +4375,7 @@ input[type=button].btn-block, input[type=reset].btn-block, input[type=submit].bt
     flex-direction: column;
     min-width: 0;
     word-wrap: break-word;
-    background-color: #120f12;
+    background-color: #262632;
     background-clip: border-box;
     border: 1px solid rgba(0, 0, 0, .125);
     border-radius: .25rem
@@ -9651,7 +9677,7 @@ a.text-warning:focus, a.text-warning:hover {
 }
 
 .text-danger {
-    color: #621b18 !important
+    color: red !important
 }
 
 a.text-danger:focus, a.text-danger:hover {
@@ -9822,12 +9848,21 @@ svg.icon {
 }
 
 .header {
-    border-bottom: 1px solid #343434
+    border-bottom: 1px solid #343434;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+    background: #262632;
 }
 
 .header svg.logo {
     width: 1.7rem;
     height: 1.7rem
+}
+
+.content{
+    margin-top: 60px;
 }
 
 .sidebar .nav-item a {
@@ -9876,11 +9911,11 @@ svg.icon {
 }
 
 .card .table td, .card .table th {
-    padding: .75rem 1.25rem
+    padding: .25rem 1rem
 }
 
 .card .table.table-sm td, .card .table.table-sm th {
-    padding: 1rem 1.25rem
+    padding: 0.5rem
 }
 
 .card .table th {
@@ -10037,4 +10072,24 @@ button:hover .fill-primary {
     overflow: hidden;
     text-overflow: ellipsis;
     display: inline-block;
+}
+
+.pre-code {
+    background-color: #120f12;
+    font: 13px monospace;
+    line-height: 0;
+    text-align: left;
+    color: #b9b5b8;
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.pre-code > ol {
+    line-height: 5px;
+    margin: 0;
+}
+
+.pre-code > ol > li.current {
+    color: red;
 }

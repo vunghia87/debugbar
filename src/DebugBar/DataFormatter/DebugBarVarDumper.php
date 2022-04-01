@@ -17,6 +17,7 @@ class DebugBarVarDumper implements AssetProvider
                 ->depth(3)
                 ->filter(false)
                 ->onlyVar(true)
+                ->renderHeader(false)
                 ->type('html');
         }
         return $this->dumper;
