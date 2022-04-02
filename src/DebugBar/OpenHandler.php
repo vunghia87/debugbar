@@ -18,7 +18,7 @@ class OpenHandler
     protected $debugBar;
 
     /**
-     * @param DebugBar $debugBar
+     * @param DebugBar|AdvanceDebugBar $debugBar
      * @throws DebugBarException
      */
     public function __construct(DebugBar $debugBar)
@@ -47,7 +47,7 @@ class OpenHandler
         $op = 'find';
         if (isset($request['op'])) {
             $op = $request['op'];
-            if (!in_array($op, array('find', 'get', 'clear', 'all', 'detail'))) {
+            if (!in_array($op, array('find', 'get', 'clear', 'all', 'detail', 'toggle'))) {
                 throw new DebugBarException("Invalid operation '{$request['op']}'");
             }
         }
@@ -120,12 +120,17 @@ class OpenHandler
         return ob_get_clean();
     }
 
-
     public function detail($request)
     {
         $data = $this->get($request);
+        xdump($data);
         ob_start();
         include  __DIR__ . '/Viewer/detail.php';
         return ob_get_clean();
+    }
+
+    public function toggle($request)
+    {
+        return ['result' => $this->debugBar->toggle()];
     }
 }

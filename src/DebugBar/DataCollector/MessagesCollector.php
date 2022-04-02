@@ -143,8 +143,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
             //'message' => $messageText,
             'message_html' => $messageHtml,
             'is_string' => $isString,
-            'label' => $label,
-            'time' => microtime(true)
+            'label' => $label
         );
 
         if ($this->shouldTrace) {

@@ -69,7 +69,7 @@ class ResponseCollector extends DataCollector implements Renderable
         return array(
             "response" => array(
                 "icon" => "eye",
-                "widget" => "PhpDebugBar.Widgets.VariableListWidget",
+                "widget" => "PhpDebugBar.Widgets.HtmlVariableListWidget",
                 "map" => "response",
                 "default" => ""
             )

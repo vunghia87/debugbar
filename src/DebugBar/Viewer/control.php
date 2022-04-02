@@ -1,9 +1,12 @@
-<button class="btn btn-outline-primary ml-auto mr-3" title="Play/Pause">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="icon fill-primary" v-if="recording">
-        <path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z"/>
+<button id="btn-toggle" class="btn btn-outline-primary ml-auto mr-3" title="Play/Pause">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="icon fill-primary">
+        <path d="<?= debugbar()->isEnable() ? 'M5 4h3v12H5V4zm7 0h3v12h-3V4z' : 'M4 4l12 6-12 6z' ?>"/>
     </svg>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="icon fill-primary" v-else>
-        <path d="M4 4l12 6-12 6z"/>
+</button>
+
+<button id="btn-clear" class="btn btn-outline-primary mr-3" title="Clear Entries">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="icon fill-primary">
+        <path d="M6 2l2-2h4l2 2h4v2H2V2h4zM3 6h14l-1 14H4L3 6zm5 2v10h1V8H8zm3 0v10h1V8h-1z"/>
     </svg>
 </button>
 

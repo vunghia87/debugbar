@@ -22,8 +22,9 @@ class AuthCollector extends DataCollector implements Renderable
         $auth = \DebugBar\Loader\AuthGlobal::getAuth();
 
         if (empty($auth)) {
-            return ['Guest'];
+            return [];
         }
+
         $class = is_object($auth) ? get_class($auth) : 'Auth';
         $auth = $this->getVarDumper()->renderVar($auth);
         return [$class => $auth];

@@ -79,6 +79,11 @@ class AdvanceDebugBar extends DebugBar
      */
     public final function run()
     {
+        /** @var \DebugBar\AdvanceDebugBar $debugbar */
+        $debugbar = $this;
+
+        $this->selectStorage($debugbar);
+
         if (!$this->isEnable() || $this->inExceptArray($_REQUEST)) {
             return;
         }
@@ -99,9 +104,6 @@ class AdvanceDebugBar extends DebugBar
 
         $this->loader();
 
-        /** @var \DebugBar\AdvanceDebugBar $debugbar */
-        $debugbar = $this;
-
         $events = \DebugBar\Events\Dispatcher::getInstance();
 
         // Set custom error handler
@@ -109,7 +111,10 @@ class AdvanceDebugBar extends DebugBar
             set_exception_handler([$this, 'handleError']);
         }
 
-        $this->selectStorage($debugbar);
+//        /** @var \DebugBar\AdvanceDebugBar $debugbar */
+//        $debugbar = $this;
+//
+//        $this->selectStorage($debugbar);
 
         if ($this->shouldCollect('phpinfo', true)) {
             $this->addCollector(new \DebugBar\DataCollector\PhpInfoCollector());
@@ -200,14 +205,26 @@ class AdvanceDebugBar extends DebugBar
     public function isEnable()
     {
         if ($this->enabled === null) {
-            $this->enabled = (bool)$this->config['enabled'] ?? false;
-
-            if (php_sapi_name() === 'cli') {
+            $isEnable = (bool)$this->config['enabled'] ?? false;
+            if (!$isEnable) {
                 $this->enabled = false;
+            } else {
+                $this->enabled = $this->isEnableByCookie();
             }
+
+           // $this->enabled = $this->isEnableByCookie();
         }
 
         return $this->enabled;
+    }
+
+    protected function isEnableByCookie()
+    {
+        if (!isset($_COOKIE['debugBar'])) {
+            setcookie('debugBar', $this->config['enabled'] ? 1 : 0, time() + 86400);
+        }
+
+        return $_COOKIE['debugBar'] == 1;
     }
 
     /**
@@ -228,6 +245,15 @@ class AdvanceDebugBar extends DebugBar
     public function disable()
     {
         $this->enabled = false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function toggle()
+    {
+        setcookie('debugBar', $_COOKIE['debugBar'] == 1 ? 0 : 1, time() + 86400);
+        return $_COOKIE['debugBar'] == 1;
     }
 
     /**
@@ -504,8 +530,12 @@ class AdvanceDebugBar extends DebugBar
     {
         $messageLevels = ['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug', 'log'];
         if (in_array($method, $messageLevels)) {
-            foreach ($args as $arg) {
-                $this->addMessage($arg, $method);
+            if (count($args) == 1) {
+                $this->addMessage($args[0], $method);
+            } else {
+                foreach ($args as $arg) {
+                    $this->addMessage($arg, $method);
+                }
             }
         }
     }

@@ -45,7 +45,7 @@ class Framer
     {
         $result = [];
         foreach ($this->debugBacktrace as $index => $trace){
-            if($this->fileIsInExcludedPath($trace['file'])){
+            if ($this->fileIsInExcludedPath($trace['file']) || !isset($trace['file'])) {
                 continue;
             }
 
@@ -138,9 +138,10 @@ class Framer
             $lines = '<div class="stack-lines">';
             $code = strtr('<pre class="stack-code" key=":key"><code lang=":lang">', [":key" => $key, ":lang" => $mime]);
             foreach ($value['lines'] as $index => $line) {
+                $current = $value['start'] + $index + 1;
                 $lines .= strtr('<p class="stack-line"> <a target="_blank" href=":editorHref">:index </a></p>',[
-                    ":index" => $value['start'] + $index + 1,
-                    ":editorHref" => $this->getEditorHref($value['file'], (int)$value['line'])
+                    ":index" => $current,
+                    ":editorHref" => $this->getEditorHref($value['file'], (int)$current)
                 ]);
                 $code .= strtr('<p class="stack-code-line :current">:line</p>', [
                     ":line" => htmlentities($line),

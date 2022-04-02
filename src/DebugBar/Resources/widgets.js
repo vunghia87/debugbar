@@ -432,7 +432,8 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 }
 
                 for (var i = 0; i < data.length; i++) {
-                    var message = caseless ? data[i].message.toLowerCase() : data[i].message;
+                    var mes = data[i].message ?? data[i].message_html
+                    var message = caseless ? mes.toLowerCase() : mes;
 
                     if ((!data[i].label || $.inArray(data[i].label, exclude) === -1) && (!search || message.indexOf(search) > -1)) {
                         fdata.push(data[i]);
