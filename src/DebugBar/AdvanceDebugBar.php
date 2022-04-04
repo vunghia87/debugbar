@@ -206,13 +206,17 @@ class AdvanceDebugBar extends DebugBar
     {
         if ($this->enabled === null) {
             $isEnable = (bool)$this->config['enabled'] ?? false;
-            if (!$isEnable) {
-                $this->enabled = false;
+            if (php_sapi_name() === 'cli') {
+                $this->enabled = $isEnable;
             } else {
-                $this->enabled = $this->isEnableByCookie();
+                $this->enabled = $isEnable && $this->isEnableByCookie();
             }
 
-           // $this->enabled = $this->isEnableByCookie();
+//            if (!$isEnable) {
+//                $this->enabled = false;
+//            } else {
+//                $this->enabled = $this->isEnableByCookie();
+//            }
         }
 
         return $this->enabled;
@@ -530,12 +534,8 @@ class AdvanceDebugBar extends DebugBar
     {
         $messageLevels = ['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug', 'log'];
         if (in_array($method, $messageLevels)) {
-            if (count($args) == 1) {
-                $this->addMessage($args[0], $method);
-            } else {
-                foreach ($args as $arg) {
-                    $this->addMessage($arg, $method);
-                }
+            foreach ($args as $arg) {
+                $this->addMessage($arg, $method);
             }
         }
     }

@@ -122,7 +122,7 @@ class TraceablePDOStatement extends PDOStatement
 
         $trace->end($ex, $this->rowCount());
         if ($this->pdo->getFindSource()) {
-            $trace->debugTrace(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS | DEBUG_BACKTRACE_PROVIDE_OBJECT, 30));
+            $trace->debugTrace(debug_backtrace(null, 15));
         }
         $this->pdo->addExecutedStatement($trace);
 

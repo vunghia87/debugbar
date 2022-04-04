@@ -10,6 +10,8 @@
 
 namespace DebugBar;
 
+use DebugBar\Dumper\Framer;
+
 /**
  * Handler to list and open saved dataset
  */
@@ -47,12 +49,12 @@ class OpenHandler
         $op = 'find';
         if (isset($request['op'])) {
             $op = $request['op'];
-            if (!in_array($op, array('find', 'get', 'clear', 'all', 'detail', 'toggle'))) {
+            if (!in_array($op, array('find', 'get', 'clear', 'all', 'detail', 'toggle', 'frame'))) {
                 throw new DebugBarException("Invalid operation '{$request['op']}'");
             }
         }
 
-        if ($sendHeader && !in_array($request['op'], ['all', 'detail'])) {
+        if ($sendHeader && !in_array($request['op'], ['all', 'detail', 'frame'])) {
             $this->debugBar->getHttpDriver()->setHeaders(array(
                 'Content-Type' => 'application/json'
             ));
@@ -120,17 +122,46 @@ class OpenHandler
         return ob_get_clean();
     }
 
-    public function detail($request)
+    protected function detail($request)
     {
         $data = $this->get($request);
-        xdump($data);
         ob_start();
         include  __DIR__ . '/Viewer/detail.php';
         return ob_get_clean();
     }
 
-    public function toggle($request)
+    protected function toggle($request)
     {
         return ['result' => $this->debugBar->toggle()];
+    }
+
+    protected function frame($request)
+    {
+        if (!$request['type']) {
+            return '';
+        }
+        $data = $this->get($request);
+        $index = $request['index'] ?? 0;
+        switch ($request['type']) {
+            case 'pdo':
+                $dataType = $data['pdo']['statements'][$index] ?? [];
+                break;
+            case 'memcache':
+                $dataType = $data['memcache']['memcaches'][$index] ?? [];
+                break;
+            case 'message':
+                $dataType = $data['message']['messages'][$index] ?? [];
+                break;
+            case 'command':
+                $dataType = $data['command']['commands'][$index] ?? [];
+                break;
+        }
+
+        if (!isset($dataType['backtrace'])) {
+            return '';
+        }
+
+        xdump($dataType);
+        return new Framer($dataType['backtrace'] ?? []);
     }
 }

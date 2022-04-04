@@ -120,6 +120,14 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
      */
     public function collect()
     {
+        return $this->http();
+    }
+
+    /**
+     * @return \stdClass
+     */
+    protected function http()
+    {
         $vars = array('_GET', '_POST', '_SESSION', '_COOKIE', '_SERVER');
         if (!$this->shouldServer) {
             unset($vars[4]);

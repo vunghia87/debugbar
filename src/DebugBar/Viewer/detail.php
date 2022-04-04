@@ -10,8 +10,13 @@
         <?php include 'logo.php' ?>
         <?php include 'menu.php' ?>
         <?php include 'control.php' ?>
+        <button onclick="collapseAll()" class="btn btn-outline-primary ml-3" title="Collapse">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon fill-primary" fill="none" viewBox="0 0 22 22" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+            </svg>
+        </button>
     </div>
-    <div class="container-fluid content mb-5">
+    <div class="container-fluid content mb-5" id="content" data-id="<?= $request['id'] ?>">
         <div class="row">
             <?php include 'nav.php' ?>
             <div class="col-10" id="request">
@@ -27,7 +32,8 @@
                             <tbody>
                             <tr>
                                 <td class="table-fit font-weight-bold">Time</td>
-                                <td><?= $data['__meta']['datetime'] ?? '' ?>
+                                <td>
+                                    <?= $data['__meta']['datetime'] ?? '' ?>
                                     (<?= time_human($data['__meta']['datetime'] ?? 0) ?>)
                                 </td>
                             </tr>
@@ -93,12 +99,14 @@
                         </div>
                     </div>
                 <?php endif; ?>
+
                 <?php if (!empty($data['exceptions']['count'])): ?>
                     <div class="card mt-3" id="exception">
                         <ul class="nav nav-pills">
                             <li class="nav-item">
-                                <a href="#" class="nav-link active">Exception
-                                    (<?= $data['exceptions']['count'] ?? 0 ?>)</a>
+                                <a href="#" class="nav-link active">
+                                    Exception (<?= $data['exceptions']['count'] ?? 0 ?>)
+                                </a>
                             </li>
                         </ul>
                         <div>
@@ -136,31 +144,32 @@
                         </div>
                     </div>
                 <?php endif; ?>
+
                 <?php if (!empty($data['pdo']['statements'])): ?>
-                    <div class="card mt-3" id="database">
+                    <div class="card mt-3" id="pdo">
                         <ul class="nav nav-pills">
                             <li class="nav-item">
-                                <a href="#" class="nav-link active">Queries
-                                    (<?= count($data['pdo']['statements'] ?? []) ?>)</a>
+                                <a href="#" class="nav-link active">
+                                    Queries (<?= count($data['pdo']['statements'] ?? []) ?>)
+                                </a>
                             </li>
                         </ul>
                         <table class="table table-striped table-fixed table-sm mb-0">
                             <thead>
                             <tr>
-                                <th style="width: 60%">Query
-                                    <br><small><span id="duplicate">0</span> of which are
-                                        duplicated.</small>
+                                <th style="width: 60%">
+                                    Query<br><small><span id="unique">0</span> of which are unique.</small>
                                 </th>
-                                <th>Row
-                                    <br><small>&nbsp;</small>
+                                <th>
+                                    Row<br><small>&nbsp;</small>
                                 </th>
-                                <th>Duration
-                                    <br><small><?= $data['pdo']['accumulated_duration_str'] ?? '' ?></small>
+                                <th>
+                                    Duration<br><small><?= $data['pdo']['accumulated_duration_str'] ?? '' ?></small>
                                 </th>
-                                <th>Memory
-                                    <br><small><?= $data['pdo']['memory_usage_str'] ?? '' ?></small>
+                                <th>
+                                    Memory<br><small><?= $data['pdo']['memory_usage_str'] ?? '' ?></small>
                                 </th>
-                                <th class="text-right">Action</th>
+                                <th style="width: 12%" class="text-right">Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -171,44 +180,94 @@
                                              title="<?= $item['sql'] ?? '' ?>">
                                             <span class="dot <?= $item['is_success'] ? 'success' : 'error' ?>"></span>
                                             <?= $item['error_message'] ?? '' ?>
-                                            <?= $item['sql'] ?? '' ?>
+                                            <span class="sql">
+                                                <?= $item['sql'] ?? '' ?>
+                                            </span>
                                         </div>
                                     </td>
                                     <td><?= $item['row_count'] ?? 0 ?></td>
                                     <td><?= $item['duration_str'] ?? '' ?></td>
                                     <td><?= $item['memory_str'] ?? '' ?></td>
-                                    <td class="text-right">Copy</td>
+                                    <td class="text-right">
+                                        <div class="btn-group">
+                                            <button class="btn-query-trace btn btn-sm btn-outline-info text-white">Backtrace</button>
+                                            <button class="btn-code btn btn-sm btn-outline-danger text-white" data-index="<?= $index ?>">Code</button>
+                                        </div>
+
+                                    </td>
+                                </tr>
+                                <tr class="hidden">
+                                    <td colspan="5">
+                                        <ol class="bt">
+                                            <?php foreach ($item['backtrace'] ?? [] as $trace) : ?>
+                                            <li>
+                                                <div class="text-muted"> <?= $trace['file'] ?? '' ?>:<?= $trace['line'] ?? '' ?>
+                                                <a target="_blank" href="<?= $trace['editorHref'] ?? '' ?>">#</a></div>
+                                                <div class="bg-secondary text-light small">
+                                                    <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class']?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if(is_array($trace['object'])): ?>
+                                                    (<?= implode(', ', array_map(function ($v, $k) { return sprintf("%s='%s'", $k, $v); }, $trace['object'], array_keys($trace['object']))); ?>)
+                                                    <?php endif; ?>
+                                                </div>
+                                            </li>
+                                            <?php endforeach; ?>
+                                        </ol>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
                 <?php endif; ?>
+
                 <?php if (!empty($data['messages']['count'])): ?>
                     <div class="card mt-3" id="message">
                         <ul class="nav nav-pills">
                             <li class="nav-item">
-                                <a href="#" class="nav-link active">Message (<?= $data['messages']['count'] ?? 0 ?>)</a>
+                                <a href="#" class="nav-link active">
+                                    Message (<?= $data['messages']['count'] ?? 0 ?>)
+                                </a>
                             </li>
                         </ul>
-                        <div>
-                            <?php foreach ($data['messages']['messages'] ?? [] as $key => $value) : ?>
+                        <div class="card-content">
+                            <?php foreach ($data['messages']['messages'] ?? [] as $key => $item) : ?>
                                 <div class="card-bg-secondary px-3 py-2" style="border-top: 1px solid #120f12">
-                                    <p class="mb-2 text-white font-weight-bold"><?= $value['label'] ?? '' ?> |
-                                        <a href="#">Backtrace</a>
-                                    </p>
-                                    <?= $value['message_html'] ?? '' ?>
+                                    <div class="d-flex mb-2">
+                                        <div class="text-white font-weight-bold">
+                                            <?= $item['label'] ?? '' ?>
+                                        </div>
+                                        <div class="ml-auto">
+                                            <button class="btn-mes-trace btn btn-sm btn-outline-info text-white">Backtrace</button>
+                                        </div>
+                                    </div>
+                                    <?= $item['message_html'] ?? '' ?>
                                 </div>
+                                <ol class="bt hidden">
+                                    <?php foreach ($item['backtrace'] ?? [] as $trace) : ?>
+                                        <li>
+                                            <div class="text-muted">
+                                                <?= $trace['file'] ?? '' ?>:<?= $trace['line'] ?? '' ?>
+                                                <a target="_blank" href="<?= $trace['editorHref'] ?? '' ?>">#</a>
+                                            </div>
+                                            <div class="bg-secondary text-light small">
+                                                <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class']?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if(is_array($trace['object'])): ?>
+                                                    (<?= implode(', ', array_map(function ($v, $k) { return sprintf("%s='%s'", $k, $v); }, $trace['object'], array_keys($trace['object']))); ?>)
+                                                <?php endif; ?>
+                                            </div>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ol>
                             <?php endforeach; ?>
                         </div>
                     </div>
                 <?php endif; ?>
+
                 <?php if (!empty($data['memcache']['count'])): ?>
                     <div class="card mt-3" id="memcache">
                         <ul class="nav nav-pills">
                             <li class="nav-item">
-                                <a href="#" class="nav-link active">Memcache
-                                    (<?= $data['memcache']['count'] ?? 0 ?>)</a>
+                                <a href="#" class="nav-link active">
+                                    Memcache (<?= $data['memcache']['count'] ?? 0 ?>)
+                                </a>
                             </li>
                         </ul>
                         <table class="table table-striped table-fixed table-sm mb-0">
@@ -232,34 +291,79 @@
                                     </td>
                                     <td><?= $item['label'] ?? '' ?></td>
                                     <td><?= isset($item['timeLife']) ? $item['timeLife'] . ' second' : '' ?></td>
-                                    <td class="text-right">Copy</td>
+                                    <td class="text-right">
+                                        <button class="btn-query-trace btn btn-sm btn-outline-info text-white">Backtrace</button>
+                                    </td>
+                                </tr>
+                                <tr class="hidden">
+                                    <td colspan="4">
+                                        <ol class="bt">
+                                            <?php foreach ($item['backtrace'] ?? [] as $trace) : ?>
+                                                <li>
+                                                    <div class="text-muted">
+                                                        <?= $trace['file'] ?? '' ?>:<?= $trace['line'] ?? '' ?>
+                                                        <a target="_blank" href="<?= $trace['editorHref'] ?? '' ?>">#</a>
+                                                    </div>
+                                                    <div class="bg-secondary text-light small">
+                                                        <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class']?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if(is_array($trace['object'])): ?>
+                                                            (<?= implode(', ', array_map(function ($v, $k) { return sprintf("%s='%s'", $k, $v); }, $trace['object'], array_keys($trace['object']))); ?>)
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ol>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
                 <?php endif; ?>
+
                 <?php if (!empty($data['command']['count'])): ?>
                     <div class="card mt-3" id="command">
                         <ul class="nav nav-pills">
-                            <li class="nav-item"><a href="#" class="nav-link active">Command
-                                    (<?= $data['command']['count'] ?? 0 ?>)</a></li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link active">
+                                    Command (<?= $data['command']['count'] ?? 0 ?>)
+                                </a>
+                            </li>
                         </ul>
-                        <div>
-                            <?php foreach ($data['command']['commands'] ?? [] as $key => $value) : ?>
+                        <div class="card-content">
+                            <?php foreach ($data['command']['commands'] ?? [] as $key => $item) : ?>
                                 <div class="card-bg-secondary px-3 py-2" style="border-top: 1px solid #120f12">
-                                    <p class="mb-2 text-white font-weight-bold"><?= $value['command'] ?? '' ?> |
-                                        <a href="#">Backtrace</a>
-                                    </p>
+                                    <div class="d-flex mb-2">
+                                        <div class="text-white font-weight-bold">
+                                            <?= $item['command'] ?? '' ?>
+                                        </div>
+                                        <div class="ml-auto">
+                                            <button class="btn-mes-trace btn btn-sm btn-outline-info text-white">Backtrace</button>
+                                        </div>
+                                    </div>
                                     <p>
                                         <strong class="text-muted">Agruments:</strong>
-                                        <small><?= $value['arguments'] ?? '' ?> </small>
+                                        <small><?= $item['arguments'] ?? '' ?> </small>
                                     </p>
                                     <p>
                                         <strong class="text-muted">Options:</strong>
-                                        <small><?= $value['options'] ?? '' ?></small>
+                                        <small><?= $item['options'] ?? '' ?></small>
                                     </p>
                                 </div>
+                                <ol class="bt hidden">
+                                    <?php foreach ($item['backtrace'] ?? [] as $trace) : ?>
+                                        <li>
+                                            <div class="text-muted">
+                                                <?= $trace['file'] ?? '' ?>:<?= $trace['line'] ?? '' ?>
+                                                <a target="_blank" href="<?= $trace['editorHref'] ?? '' ?>">#</a>
+                                            </div>
+                                            <div class="bg-secondary text-light small">
+                                                <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class']?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if(is_array($trace['object'])): ?>
+                                                    (<?= implode(', ', array_map(function ($v, $k) { return sprintf("%s='%s'", $k, $v); }, $trace['object'], array_keys($trace['object']))); ?>)
+                                                <?php endif; ?>
+                                            </div>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ol>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -267,7 +371,6 @@
             </div>
         </div>
     </div>
-</div>
 </div>
 </body>
 </html>

@@ -63,7 +63,7 @@ class MemcacheCollector extends DataCollector implements Renderable, AssetProvid
             $item['timeLife'] = $timeLife;
         }
         $item['time'] = date('Y-m-d H:i:s');
-        $this->debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS | DEBUG_BACKTRACE_PROVIDE_OBJECT, 6);
+        $this->debugBacktrace = debug_backtrace(null, 6);
         $this->debugBacktrace = array_slice( $this->debugBacktrace, 2);
         $item['backtrace'] = $this->getDebugTrace();
 

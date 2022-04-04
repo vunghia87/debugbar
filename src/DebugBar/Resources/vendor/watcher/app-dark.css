@@ -10067,3 +10067,11 @@ button:hover .fill-primary {
 .pre-code > ol > li.current {
     color: red;
 }
+
+.hidden {
+    display: none;
+}
+
+tr.duplicate{
+    background-color: #6f6200!important;
+}
