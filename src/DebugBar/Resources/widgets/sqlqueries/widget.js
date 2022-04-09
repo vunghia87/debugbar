@@ -73,9 +73,6 @@
                         li.addClass(csscls('error'));
                         li.append($('<span />').addClass(csscls('error')).text("[" + stmt.error_code + "] " + stmt.error_message));
                     }
-                    if (typeof (stmt.match) != 'undefined' && stmt.match) {
-                        li.addClass(csscls('matching'));
-                    }
                     $('<span title="Copy to clipboard" />')
                         .addClass(csscls('copy-clipboard'))
                         .css('cursor', 'pointer')

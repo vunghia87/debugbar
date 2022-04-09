@@ -147,7 +147,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         );
 
         if ($this->shouldTrace) {
-            $debugBacktrace = debug_backtrace(null, 8);
+            $debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS | DEBUG_BACKTRACE_PROVIDE_OBJECT, 8);
             $this->debugBacktrace = array_splice($debugBacktrace, 3);
             $item['backtrace'] = $this->getDebugTrace();
         }

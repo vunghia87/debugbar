@@ -6,9 +6,5 @@
 <link href="<?= $assetUrl ?>/vendor/watcher/app-dark.css" rel="stylesheet" type="text/css">
 <link href="<?= $assetUrl ?>/vendor/dumper/dumper.css" rel="stylesheet" type="text/css">
 
-<script src="<?= $assetUrl ?>/vendor/jquery/dist/jquery.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/androidstudio.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
-
 <script src="<?= $assetUrl ?>/vendor/dumper/dumper.js"></script>
 <script src="<?= $assetUrl ?>/vendor/watcher/app.js"></script>

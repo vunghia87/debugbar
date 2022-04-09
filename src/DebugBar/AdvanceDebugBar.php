@@ -206,29 +206,30 @@ class AdvanceDebugBar extends DebugBar
     {
         if ($this->enabled === null) {
             $isEnable = (bool)$this->config['enabled'] ?? false;
-            if (php_sapi_name() === 'cli') {
-                $this->enabled = $isEnable;
-            } else {
-                $this->enabled = $isEnable && $this->isEnableByCookie();
-            }
-
-//            if (!$isEnable) {
-//                $this->enabled = false;
-//            } else {
-//                $this->enabled = $this->isEnableByCookie();
-//            }
+            $this->enabled = $isEnable && $this->isEnableByCache();
         }
 
-        return $this->enabled;
+        return $this->enabled ;
     }
 
-    protected function isEnableByCookie()
+    protected function isEnableByCache()
     {
-        if (!isset($_COOKIE['debugBar'])) {
-            setcookie('debugBar', $this->config['enabled'] ? 1 : 0, time() + 86400);
+        $fileCache = sys_get_temp_dir() . '/debugBarCache.txt';
+        if (!file_exists($fileCache)) {
+            file_put_contents($fileCache, $this->config['enabled'] ? 1 : 0);
         }
+        return file_get_contents($fileCache) == 1;
+    }
 
-        return $_COOKIE['debugBar'] == 1;
+    /**
+     * @return bool
+     */
+    public function toggle()
+    {
+        $fileCache = sys_get_temp_dir() . '/debugBarCache.txt';
+        $content = file_get_contents($fileCache);
+        file_put_contents($fileCache, !$content);
+        return $content;
     }
 
     /**
@@ -249,15 +250,6 @@ class AdvanceDebugBar extends DebugBar
     public function disable()
     {
         $this->enabled = false;
-    }
-
-    /**
-     * @return bool
-     */
-    public function toggle()
-    {
-        setcookie('debugBar', $_COOKIE['debugBar'] == 1 ? 0 : 1, time() + 86400);
-        return $_COOKIE['debugBar'] == 1;
     }
 
     /**
@@ -309,6 +301,7 @@ class AdvanceDebugBar extends DebugBar
         echo $exception->getMessage() . " " . $exception->getFile() . " Line: " . $exception->getLine() . " Trace: " . $exception->getTraceAsString();
 
         error_log($exception);
+        error_log(sprintf("context:[GET] %s [POST] %s"), json_encode($_GET ?? ''), json_encode($_POST ?? ''));
 
         if ($this->hasCollector('exceptions')) {
             $collector = $this->getCollector('exceptions');
@@ -459,7 +452,7 @@ class AdvanceDebugBar extends DebugBar
 
         $skip = $this->config['options']['db']['skip'] ?? [];
         $listen = $this->config['options']['db']['listen'] ?? [];
-        $queryCollector = new \DebugBar\DataCollector\PDO\QueryColllector($pdo, null, $skip, $listen);
+        $queryCollector = new \DebugBar\DataCollector\PDO\QueryCollector($pdo, null, $skip, $listen);
         $queryCollector->setDataFormatter(new \DebugBar\DataFormatter\QueryFormatter());
         $queryCollector->setRenderSqlWithParams(true,"'");
         $queryCollector->setShowHints(false);

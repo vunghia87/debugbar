@@ -118,7 +118,7 @@ class ProxyNewRelic
     protected static function addThrowable($exception)
     {
         error_log($exception);
-        if ($exception instanceof Throwable) {
+        if ($exception instanceof \Exception) {
             return debugbar()->addThrowable($exception);
         }
 

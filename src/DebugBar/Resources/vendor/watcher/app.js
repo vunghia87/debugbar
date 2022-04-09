@@ -43,16 +43,40 @@ $(document).ready(function () {
     if ($('#pdo').length) {
         var sqls = [];
         $("#pdo").find('.sql').each(function () {
-            var sql = $(this).text();
+            var sql = $(this).text().trim().toLowerCase();
+            var action = sql.substr(0, 6);
+            if (action === 'insert' || action === 'update' || action === 'delete') {
+                $(this).closest('tr').addClass('bg-danger');
+            }
+
             var indexOf = sqls.indexOf(sql);
             if (indexOf === -1) {
                 sqls.push(sql);
             } else {
-                $(this).closest('tr').addClass('duplicate');
+                $(this).closest('tr').addClass('bg-warning');
             }
         }).promise().done(function () {
             $("#unique").text(sqls.length);
         })
+
+        $('#searchQuery').change(function () {
+            var keywords = $(this).val().trim().replace(/ +(?= )/g,'').split(' ');
+
+            if (keywords.length == 0) {
+                $("#pdo tr:odd").removeClass('hidden');
+            } else {
+                $("#pdo").find('.sql').each(function () {
+                    var sql = $(this).text().trim().toLowerCase();
+                    var check = true;
+                    keywords.forEach(function (keyword) {
+                        if (!sql.includes(keyword)) {
+                            check = false;
+                        }
+                    })
+                    check ? $(this).closest('tr').removeClass('hidden') : $(this).closest('tr').addClass('hidden')
+                })
+            }
+        });
     }
 })
 

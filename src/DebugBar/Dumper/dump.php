@@ -33,7 +33,9 @@ if (!function_exists('xx')) {
     function xx($var, ...$moreVars)
     {
         xdump($var, ...$moreVars);
-        echo new Framer(debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS));
+        if (!in_array(\PHP_SAPI, ['cli', 'phpdbg'], true)) {
+            echo new Framer(debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS));
+        }
         exit(1);
     }
 }
@@ -41,8 +43,9 @@ if (!function_exists('xx')) {
 if (!function_exists('xxx')) {
     function xxx($var, ...$moreVars)
     {
+        $isCli = in_array(\PHP_SAPI, ['cli', 'phpdbg'], true);
         $dumper = (new Dumper())
-            ->type(in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) ? 'string' : 'html')
+            ->type($isCli ? 'string' : 'html')
             ->filter(false)
             ->onlyVar(false)
             ->depth(3);
@@ -60,7 +63,9 @@ if (!function_exists('xxx')) {
                 echo $dumper->dump($value);
             }
         }
-        echo new Framer(debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS));
+        if (!$isCli) {
+            echo new Framer(debug_backtrace());
+        }
         exit(1);
     }
 }
@@ -80,6 +85,22 @@ if (!function_exists('xe')) {
         array_unshift($trace, $ex);
         echo new Framer($trace);
         exit(1);
+    }
+}
+
+if (!function_exists('args')) {
+    function args(array $vars)
+    {
+        $results = [];
+        foreach ($vars as $var) {
+            if (is_object($var)) {
+                $results[] = serialize($var);
+                continue;
+            }
+            $results[] = $var;
+        }
+
+        debugbar()->debug($results);
     }
 }
 

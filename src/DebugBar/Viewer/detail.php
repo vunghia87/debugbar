@@ -18,8 +18,7 @@
     </div>
     <div class="container-fluid content mb-5" id="content" data-id="<?= $request['id'] ?>">
         <div class="row">
-            <?php include 'nav.php' ?>
-            <div class="col-10" id="request">
+            <div class="col-12" id="request">
                 <div class="card">
                     <div class="card-header d-flex align-items-center justify-content-between p-0">
                         <ul class="nav nav-pills">
@@ -147,14 +146,17 @@
 
                 <?php if (!empty($data['pdo']['statements'])): ?>
                     <div class="card mt-3" id="pdo">
-                        <ul class="nav nav-pills">
-                            <li class="nav-item">
-                                <a href="#" class="nav-link active">
-                                    Queries (<?= count($data['pdo']['statements'] ?? []) ?>)
-                                </a>
-                            </li>
-                        </ul>
-                        <table class="table table-striped table-fixed table-sm mb-0">
+                        <div class="card-header p-0 d-flex align-items-center justify-content-between">
+                            <ul class="nav nav-pills">
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link active">
+                                        Queries (<?= count($data['pdo']['statements'] ?? []) ?>)
+                                    </a>
+                                </li>
+                            </ul>
+                            <input type="text" id="searchQuery" placeholder="insert table ..." class="form-control w-25">
+                        </div>
+                        <table class="table table-fixed table-sm mb-0">
                             <thead>
                             <tr>
                                 <th style="width: 60%">
@@ -193,7 +195,6 @@
                                             <button class="btn-query-trace btn btn-sm btn-outline-info text-white">Backtrace</button>
                                             <button class="btn-code btn btn-sm btn-outline-danger text-white" data-index="<?= $index ?>">Code</button>
                                         </div>
-
                                     </td>
                                 </tr>
                                 <tr class="hidden">
@@ -229,14 +230,17 @@
                             </li>
                         </ul>
                         <div class="card-content">
-                            <?php foreach ($data['messages']['messages'] ?? [] as $key => $item) : ?>
+                            <?php foreach ($data['messages']['messages'] ?? [] as $index => $item) : ?>
                                 <div class="card-bg-secondary px-3 py-2" style="border-top: 1px solid #120f12">
                                     <div class="d-flex mb-2">
-                                        <div class="text-white font-weight-bold">
+                                        <div class="text-white p-1 font-weight-bold bg-<?= $item['label'] ?? ''?>">
                                             <?= $item['label'] ?? '' ?>
                                         </div>
                                         <div class="ml-auto">
-                                            <button class="btn-mes-trace btn btn-sm btn-outline-info text-white">Backtrace</button>
+                                            <div class="btn-group">
+                                                <button class="btn-mes-trace btn btn-sm btn-outline-info text-white">Backtrace</button>
+                                                <button class="btn-code btn btn-sm btn-outline-danger text-white" data-index="<?= $index ?>">Code</button>
+                                            </div>
                                         </div>
                                     </div>
                                     <?= $item['message_html'] ?? '' ?>
@@ -270,7 +274,7 @@
                                 </a>
                             </li>
                         </ul>
-                        <table class="table table-striped table-fixed table-sm mb-0">
+                        <table class="table table-fixed table-sm mb-0">
                             <thead>
                             <tr>
                                 <th style="width: 60%">Key</th>
@@ -292,7 +296,10 @@
                                     <td><?= $item['label'] ?? '' ?></td>
                                     <td><?= isset($item['timeLife']) ? $item['timeLife'] . ' second' : '' ?></td>
                                     <td class="text-right">
-                                        <button class="btn-query-trace btn btn-sm btn-outline-info text-white">Backtrace</button>
+                                        <div class="btn-group">
+                                            <button class="btn-query-trace btn btn-sm btn-outline-info text-white">Backtrace</button>
+                                            <button class="btn-code btn btn-sm btn-outline-danger text-white" data-index="<?= $index ?>">Code</button>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr class="hidden">
@@ -330,14 +337,17 @@
                             </li>
                         </ul>
                         <div class="card-content">
-                            <?php foreach ($data['command']['commands'] ?? [] as $key => $item) : ?>
+                            <?php foreach ($data['command']['commands'] ?? [] as $index => $item) : ?>
                                 <div class="card-bg-secondary px-3 py-2" style="border-top: 1px solid #120f12">
                                     <div class="d-flex mb-2">
                                         <div class="text-white font-weight-bold">
                                             <?= $item['command'] ?? '' ?>
                                         </div>
                                         <div class="ml-auto">
-                                            <button class="btn-mes-trace btn btn-sm btn-outline-info text-white">Backtrace</button>
+                                            <div class="btn-group">
+                                                <button class="btn-mes-trace btn btn-sm btn-outline-info text-white">Backtrace</button>
+                                                <button class="btn-code btn btn-sm btn-outline-danger text-white" data-index="<?= $index ?>">Code</button>
+                                            </div>
                                         </div>
                                     </div>
                                     <p>

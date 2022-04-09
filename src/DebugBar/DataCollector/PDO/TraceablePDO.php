@@ -17,9 +17,6 @@ class TraceablePDO extends PDO
     /** @var TracedStatement[] */
     protected $executedStatements = [];
 
-    /** @var bool  */
-    protected $findSource = false;
-
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
@@ -219,10 +216,10 @@ class TraceablePDO extends PDO
 
         $trace->end($ex);
         $this->addExecutedStatement($trace);
-
         if ($this->pdo->getAttribute(PDO::ATTR_ERRMODE) === PDO::ERRMODE_EXCEPTION && $ex !== null) {
             throw $ex;
         }
+
         return $result;
     }
 
@@ -314,19 +311,14 @@ class TraceablePDO extends PDO
         return call_user_func_array([$this->pdo, $name], $args);
     }
 
-    /**
-     * Enable/disable finding the source
-     *
-     * @param bool $value
-     */
-    public function setFindSource($value)
+    protected $findSource = false;
+
+    public function setFindSource(bool $findSource)
     {
-        $this->findSource = (bool) $value;
+        $this->findSource = $findSource;
+        return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getFindSource()
     {
         return $this->findSource;

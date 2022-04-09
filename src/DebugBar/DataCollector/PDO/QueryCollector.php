@@ -3,9 +3,8 @@
 namespace DebugBar\DataCollector\PDO;
 
 use DebugBar\DataCollector\TimeDataCollector;
-use DebugBar\DataCollector\PDO\TracedStatement;
 
-class QueryColllector extends PDOCollector
+class QueryCollector extends PDOCollector
 {
     protected $queries = [];
     protected $showHints = false;
@@ -51,15 +50,8 @@ class QueryColllector extends PDOCollector
             'error_code' => $stmt->getErrorCode(),
             'error_message' => $stmt->getErrorMessage(),
             'hints' => $hints,
-            'match' => false,
             'backtrace' => $source,
         );
-
-        foreach ($this->listen as $listen) {
-            if (strpos($query, $listen)) {
-                $item['match'] = true;
-            }
-        }
 
         return $item;
     }
@@ -124,7 +116,11 @@ class QueryColllector extends PDOCollector
         }
         $stmts = array();
         /** @var \DebugBar\DataCollector\PDO\TracedStatement $stmt */
-        foreach ($pdo->getExecutedStatements() as $stmt) {
+        foreach ($pdo->getExecutedStatements() as $index => $stmt) {
+//            if ($index > 2) {
+//                info('PDO queries over limit 2');
+//                break;
+//            }
             if (!empty($item = $this->addQuery($stmt))) {
                 $stmts[] = $item;
                 if ($timeCollector !== null) {

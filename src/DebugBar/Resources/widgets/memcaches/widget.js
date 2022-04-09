@@ -82,19 +82,23 @@
                             var $value = $('<td colspan="2"/>').css('text-align', 'left');
 
                             var v = stmt.value;
-                            if (v && v.length > 100) {
-                                v = v.substr(0, 100) + "...";
-                            }
-                            var prettyVal = null;
-                            $value.text(v).click(function (e) {
-                                if ($value.hasClass(csscls('pretty'))) {
-                                    $value.text(v).removeClass(csscls('pretty'));
-                                } else {
-                                    prettyVal = prettyVal || PhpDebugBar.Widgets.createCodeBlock(stmt.value);
-                                    $value.addClass(csscls('pretty')).empty().append(prettyVal);
+                            if (v.includes('<pre')) {
+                                $value.html(v)
+                            } else {
+                                if (v && v.length > 100) {
+                                    v = v.substr(0, 100) + "...";
                                 }
-                                e.stopPropagation()
-                            });
+                                var prettyVal = null;
+                                $value.text(v).click(function (e) {
+                                    if ($value.hasClass(csscls('pretty'))) {
+                                        $value.text(v).removeClass(csscls('pretty'));
+                                    } else {
+                                        prettyVal = prettyVal || PhpDebugBar.Widgets.createCodeBlock(stmt.value);
+                                        $value.addClass(csscls('pretty')).empty().append(prettyVal);
+                                    }
+                                    e.stopPropagation()
+                                });
+                            }
 
                             var $widget = new PhpDebugBar.Widgets.ListWidget();
 

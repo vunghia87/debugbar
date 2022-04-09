@@ -17,6 +17,9 @@ use DebugBar\Dumper\Framer;
  */
 class OpenHandler
 {
+    /**
+     * @var AdvanceDebugBar|DebugBar
+     */
     protected $debugBar;
 
     /**
@@ -47,20 +50,21 @@ class OpenHandler
         }
 
         $op = 'find';
+        $opView = ['all', 'detail', 'frame', 'monitor'];
         if (isset($request['op'])) {
             $op = $request['op'];
-            if (!in_array($op, array('find', 'get', 'clear', 'all', 'detail', 'toggle', 'frame'))) {
+            if (!in_array($op, array_merge($opView, ['find', 'get', 'clear', 'toggle']))) {
                 throw new DebugBarException("Invalid operation '{$request['op']}'");
             }
         }
 
-        if ($sendHeader && !in_array($request['op'], ['all', 'detail', 'frame'])) {
+        $response = call_user_func(array($this, $op), $request);
+
+        if ($sendHeader && !in_array($request['op'], $opView)) {
             $this->debugBar->getHttpDriver()->setHeaders(array(
                 'Content-Type' => 'application/json'
             ));
-            $response = json_encode(call_user_func(array($this, $op), $request));
-        } else {
-            $response = call_user_func(array($this, $op), $request);
+            $response = json_encode($response);
         }
 
         if ($echo) {
@@ -76,15 +80,8 @@ class OpenHandler
      */
     protected function find($request)
     {
-        $max = 20;
-        if (isset($request['max'])) {
-            $max = $request['max'];
-        }
-
-        $offset = 0;
-        if (isset($request['offset'])) {
-            $offset = $request['offset'];
-        }
+        $max = $request['max'] ?? 20;
+        $offset = $request['offset'] ?? 0;
 
         return $this->debugBar->getStorage()->find($request, $max, $offset);
     }
@@ -118,7 +115,7 @@ class OpenHandler
         $request['max'] = $request['max'] ?? 50;
         $data = $this->find($request);
         ob_start();
-        include  __DIR__ . '/Viewer/all.php';
+        include __DIR__ . '/Viewer/all.php';
         return ob_get_clean();
     }
 
@@ -126,7 +123,7 @@ class OpenHandler
     {
         $data = $this->get($request);
         ob_start();
-        include  __DIR__ . '/Viewer/detail.php';
+        include __DIR__ . '/Viewer/detail.php';
         return ob_get_clean();
     }
 
@@ -142,18 +139,26 @@ class OpenHandler
         }
         $data = $this->get($request);
         $index = $request['index'] ?? 0;
+
+        $style = 'background-color:#262632;font: 13px monospace;line-height:1.2em;padding:3px 10px;text-align:left;color:#b9b5b8;margin:0;white-space:pre-wrap;word-wrap: break-word';
         switch ($request['type']) {
             case 'pdo':
                 $dataType = $data['pdo']['statements'][$index] ?? [];
+                echo $dataType['sql'] ? "<pre style='$style'>$dataType[sql]</pre><hr>" : '';
                 break;
             case 'memcache':
                 $dataType = $data['memcache']['memcaches'][$index] ?? [];
+                echo $dataType['value'] ? "$dataType[value]<hr>" : '';
                 break;
             case 'message':
-                $dataType = $data['message']['messages'][$index] ?? [];
+                $dataType = $data['messages']['messages'][$index] ?? [];
+                echo $dataType['message_html'] ? "$dataType[message_html]<hr>" : '';
                 break;
             case 'command':
                 $dataType = $data['command']['commands'][$index] ?? [];
+
+                echo $dataType['arguments'] ? "<pre style='$style'>$dataType[arguments]</pre><hr>" : '';
+                echo $dataType['options'] ? "<pre style='$style'>$dataType[options]</pre><hr>" : '';
                 break;
         }
 
@@ -161,7 +166,16 @@ class OpenHandler
             return '';
         }
 
-        xdump($dataType);
+        //xdump($dataType);
         return new Framer($dataType['backtrace'] ?? []);
+    }
+
+    protected function monitor($request)
+    {
+        $request['type'] = 'monitor';
+        $data = $this->get($request);
+        ob_start();
+        include __DIR__ . '/Viewer/all.php';
+        return ob_get_clean();
     }
 }

@@ -268,7 +268,8 @@ class Dumper
         }
 
         if (is_string($variable)) {
-            return $output . strtr("<b class='str'>string</b> (<span class='str'>:length</span>) \"<span class='str'>:var</span>\"", [":length" => strlen($variable), ":var" => nl2br(htmlentities($variable, ENT_IGNORE, "utf-8"))]);
+            $strLen = strlen($variable);
+            return $output . strtr("<b class='str'>string</b> (<span class='str'>:length</span>) \":toggle<span class='str'>:var</span>\"", [":length" => $strLen, ":var" => nl2br(htmlentities($variable, ENT_IGNORE, "utf-8")),":toggle" => $strLen > 150 ? "<span class='dump' onclick='toggle(this)'></span>" : '']);
         }
 
         if (is_int($variable)) {

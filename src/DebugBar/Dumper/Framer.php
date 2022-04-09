@@ -257,6 +257,7 @@ class Framer
                          var codeHtml = hljs.highlight(lang,codes[j].innerText).value;
                          codes[j].innerHTML = codeHtml;
                     }
+                    current.querySelector(".stack-code-current").scrollIntoView();
                 });
                 if(i == 0) frames[i].click();
             }
