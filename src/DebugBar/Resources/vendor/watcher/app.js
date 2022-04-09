@@ -61,22 +61,24 @@ $(document).ready(function () {
 
         $('#searchQuery').change(function () {
             var keywords = $(this).val().trim().replace(/ +(?= )/g,'').split(' ');
-
             if (keywords.length == 0) {
                 $("#pdo tr:odd").removeClass('hidden');
-            } else {
-                $("#pdo").find('.sql').each(function () {
-                    var sql = $(this).text().trim().toLowerCase();
-                    var check = true;
-                    keywords.forEach(function (keyword) {
-                        if (!sql.includes(keyword)) {
-                            check = false;
-                        }
-                    })
-                    check ? $(this).closest('tr').removeClass('hidden') : $(this).closest('tr').addClass('hidden')
-                })
+                return;
             }
+
+            $("#pdo").find('.sql').each(function () {
+                var sql = $(this).text().trim().toLowerCase();
+                var check = true;
+                keywords.forEach(function (keyword) {
+                    if (!sql.includes(keyword)) {
+                        check = false;
+                    }
+                })
+                check ? $(this).closest('tr').removeClass('hidden') : $(this).closest('tr').addClass('hidden')
+            })
         });
+
+        collapseAll();
     }
 })
 

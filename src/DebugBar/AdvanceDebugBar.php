@@ -260,6 +260,22 @@ class AdvanceDebugBar extends DebugBar
         return isset($this->config['watchable']) && $this->config['watchable'] == 1;
     }
 
+    /**
+     * @return bool
+     */
+    public function monitorable()
+    {
+        return !empty(array_filter($this->getMonitor()));
+    }
+
+    /**
+     * @return array
+     */
+    public function getMonitor()
+    {
+        return $this->config['monitors'] ?? [];
+    }
+
     public function shouldCollect($name, $default = false)
     {
         return $this->config['collectors'][$name] ?? $default;

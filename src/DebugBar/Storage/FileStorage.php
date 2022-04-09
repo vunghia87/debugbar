@@ -78,19 +78,22 @@ class FileStorage implements StorageInterface
             if (!isset($filters['type'])) {
                 $type = '__meta';
                 $meta = $data[$type];
-                unset($data);
                 if ($this->filter($meta, $filters)) {
                     $results[] = $meta;
+                }
+            } elseif ($filters['type'] == 'monitor') {
+                if ($result = $this->monitor($data, $filters['monitors'] ?? [])) {
+                    $results[$index] = $result;
                 }
             } else {
                 $results[$index]['__meta'] = $data['__meta'];
                 $meta = $data[$filters['type']];
-                unset($data);
                 if ($this->filter($meta, $filters)) {
                     $results[$index]['response'] = $meta;
                 }
             }
 
+            unset($data);
             if (count($results) >= ($max + $offset)) {
                 break;
             }
@@ -138,5 +141,74 @@ class FileStorage implements StorageInterface
     public function makeFilename($id)
     {
         return $this->dirname . basename($id) . ".json";
+    }
+
+    /**
+     * Hardcode to filter collection from debugBar
+     * @param array $filters
+     * @param array $data
+     * @return mixed
+     */
+    private function monitor(array $data, array $filters = [])
+    {
+        $fnCheck = function ($value, array $keywords) {
+            foreach ($keywords as $keyword) {
+                if (str_contains($value, $keyword)) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        $dataType = [];
+        $dataKey = '';
+        foreach ($filters as $type => $item) {
+            $keywords = is_array($item)
+                ? $item
+                : explode(' ', preg_replace('!\s+!', ' ', $item));
+            switch ($type) {
+                case 'request':
+                    $dataType = $data['request']['data'] ?? [];
+                    $dataKey = function ($value) {
+                        return strip_tags($value['value'] ?? '');
+                    };
+                    break;
+                case 'db':
+                    $dataType = $data['pdo']['statements'] ?? [];
+                    $dataKey = 'sql';
+                    break;
+                case 'memcache':
+                    $dataType = $data['memcache']['memcaches'] ?? [];
+                    $dataKey = 'key';
+                    break;
+                case 'command':
+                    $dataType = $data['command']['commands'] ?? [];
+                    $dataKey = 'arguments';
+                    break;
+                case 'response':
+                    $dataType = $data['response'] ?? [];
+                    $dataKey = function ($value) {
+                        return strip_tags($value ?? '');
+                    };
+                    break;
+            }
+
+            foreach ($dataType as $value) {
+                $content = is_callable($dataKey)
+                    ? $dataKey($value)
+                    : $value[$dataKey] ?? '';
+
+                if ($fnCheck($content, $keywords)) {
+                    return [
+                        'target' => implode(',', $keywords),
+                        'type' => $type,
+                        'value' => $content,
+                        '__meta' => $data['__meta']
+                    ];
+                }
+            }
+        }
+
+        return false;
     }
 }

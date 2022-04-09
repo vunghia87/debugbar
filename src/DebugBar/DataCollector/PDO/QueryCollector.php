@@ -34,7 +34,7 @@ class QueryCollector extends PDOCollector
 
         $hints = $this->showHints ? $this->performQueryAnalysis($query) : null;
         $source = array_values($stmt->getDebugTrace());
-        $item = array(
+        return array(
             'sql' => $this->getDataFormatter()->formatSql($query),
             'row_count' => $stmt->getRowCount(),
             'stmt_id' => $stmt->getPreparedId(),
@@ -52,10 +52,46 @@ class QueryCollector extends PDOCollector
             'hints' => $hints,
             'backtrace' => $source,
         );
-
-        return $item;
     }
-    
+
+    /**
+     * Collects data from a single TraceablePDO instance
+     *
+     * @param TraceablePDO $pdo
+     * @param TimeDataCollector $timeCollector
+     * @param string|null $connectionName the pdo connection (eg default | read | write)
+     * @return array
+     */
+    protected function collectPDO(TraceablePDO $pdo, TimeDataCollector $timeCollector = null, $connectionName = null)
+    {
+        if (empty($connectionName) || $connectionName == 'default') {
+            $connectionName = 'pdo';
+        } else {
+            $connectionName = 'pdo ' . $connectionName;
+        }
+        $stmts = array();
+        foreach ($pdo->getExecutedStatements() as $index => $stmt) {
+            if (!empty($item = $this->addQuery($stmt))) {
+                $stmts[] = $item;
+                if ($timeCollector !== null) {
+                    $timeCollector->addMeasure($stmt->getSql(), $stmt->getStartTime(), $stmt->getEndTime(), array(), $connectionName);
+                }
+            }
+        }
+
+        return array(
+            'nb_statements' => count($stmts),
+            'nb_failed_statements' => count($pdo->getFailedExecutedStatements()),
+            'accumulated_duration' => $pdo->getAccumulatedStatementsDuration(),
+            'accumulated_duration_str' => $this->getDataFormatter()->formatDuration($pdo->getAccumulatedStatementsDuration()),
+            'memory_usage' => $pdo->getMemoryUsage(),
+            'memory_usage_str' => $this->getDataFormatter()->formatBytes($pdo->getPeakMemoryUsage()),
+            'peak_memory_usage' => $pdo->getPeakMemoryUsage(),
+            'peak_memory_usage_str' => $this->getDataFormatter()->formatBytes($pdo->getPeakMemoryUsage()),
+            'statements' => $stmts
+        );
+    }
+
     /**
      * Explainer::performQueryAnalysis()
      *
@@ -97,48 +133,5 @@ class QueryCollector extends PDOCollector
         return $hints;
 
         // @codingStandardsIgnoreEnd
-    }
-
-    /**
-     * Collects data from a single TraceablePDO instance
-     *
-     * @param TraceablePDO $pdo
-     * @param TimeDataCollector $timeCollector
-     * @param string|null $connectionName the pdo connection (eg default | read | write)
-     * @return array
-     */
-    protected function collectPDO(TraceablePDO $pdo, TimeDataCollector $timeCollector = null, $connectionName = null)
-    {
-        if (empty($connectionName) || $connectionName == 'default') {
-            $connectionName = 'pdo';
-        } else {
-            $connectionName = 'pdo ' . $connectionName;
-        }
-        $stmts = array();
-        /** @var \DebugBar\DataCollector\PDO\TracedStatement $stmt */
-        foreach ($pdo->getExecutedStatements() as $index => $stmt) {
-//            if ($index > 2) {
-//                info('PDO queries over limit 2');
-//                break;
-//            }
-            if (!empty($item = $this->addQuery($stmt))) {
-                $stmts[] = $item;
-                if ($timeCollector !== null) {
-                    $timeCollector->addMeasure($stmt->getSql(), $stmt->getStartTime(), $stmt->getEndTime(), array(), $connectionName);
-                }
-            }
-        }
-
-        return array(
-            'nb_statements' => count($stmts),
-            'nb_failed_statements' => count($pdo->getFailedExecutedStatements()),
-            'accumulated_duration' => $pdo->getAccumulatedStatementsDuration(),
-            'accumulated_duration_str' => $this->getDataFormatter()->formatDuration($pdo->getAccumulatedStatementsDuration()),
-            'memory_usage' => $pdo->getMemoryUsage(),
-            'memory_usage_str' => $this->getDataFormatter()->formatBytes($pdo->getPeakMemoryUsage()),
-            'peak_memory_usage' => $pdo->getPeakMemoryUsage(),
-            'peak_memory_usage_str' => $this->getDataFormatter()->formatBytes($pdo->getPeakMemoryUsage()),
-            'statements' => $stmts
-        );
     }
 }

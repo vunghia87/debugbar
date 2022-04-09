@@ -202,9 +202,9 @@
                                         <ol class="bt">
                                             <?php foreach ($item['backtrace'] ?? [] as $trace) : ?>
                                             <li>
-                                                <div class="text-muted"> <?= $trace['file'] ?? '' ?>:<?= $trace['line'] ?? '' ?>
+                                                <div class="bg-secondary text-light small"> <?= $trace['file'] ?? '' ?>:<?= $trace['line'] ?? '' ?>
                                                 <a target="_blank" href="<?= $trace['editorHref'] ?? '' ?>">#</a></div>
-                                                <div class="bg-secondary text-light small">
+                                                <div class="text-muted small">
                                                     <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class']?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if(is_array($trace['object'])): ?>
                                                     (<?= implode(', ', array_map(function ($v, $k) { return sprintf("%s='%s'", $k, $v); }, $trace['object'], array_keys($trace['object']))); ?>)
                                                     <?php endif; ?>
@@ -248,11 +248,11 @@
                                 <ol class="bt hidden">
                                     <?php foreach ($item['backtrace'] ?? [] as $trace) : ?>
                                         <li>
-                                            <div class="text-muted">
+                                            <div class="bg-secondary text-light small">
                                                 <?= $trace['file'] ?? '' ?>:<?= $trace['line'] ?? '' ?>
                                                 <a target="_blank" href="<?= $trace['editorHref'] ?? '' ?>">#</a>
                                             </div>
-                                            <div class="bg-secondary text-light small">
+                                            <div class="text-muted small">
                                                 <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class']?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if(is_array($trace['object'])): ?>
                                                     (<?= implode(', ', array_map(function ($v, $k) { return sprintf("%s='%s'", $k, $v); }, $trace['object'], array_keys($trace['object']))); ?>)
                                                 <?php endif; ?>
@@ -307,11 +307,11 @@
                                         <ol class="bt">
                                             <?php foreach ($item['backtrace'] ?? [] as $trace) : ?>
                                                 <li>
-                                                    <div class="text-muted">
+                                                    <div class="bg-secondary text-light small">
                                                         <?= $trace['file'] ?? '' ?>:<?= $trace['line'] ?? '' ?>
                                                         <a target="_blank" href="<?= $trace['editorHref'] ?? '' ?>">#</a>
                                                     </div>
-                                                    <div class="bg-secondary text-light small">
+                                                    <div class="text-muted small">
                                                         <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class']?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if(is_array($trace['object'])): ?>
                                                             (<?= implode(', ', array_map(function ($v, $k) { return sprintf("%s='%s'", $k, $v); }, $trace['object'], array_keys($trace['object']))); ?>)
                                                         <?php endif; ?>
@@ -362,11 +362,11 @@
                                 <ol class="bt hidden">
                                     <?php foreach ($item['backtrace'] ?? [] as $trace) : ?>
                                         <li>
-                                            <div class="text-muted">
+                                            <div class="bg-secondary text-light small">
                                                 <?= $trace['file'] ?? '' ?>:<?= $trace['line'] ?? '' ?>
                                                 <a target="_blank" href="<?= $trace['editorHref'] ?? '' ?>">#</a>
                                             </div>
-                                            <div class="bg-secondary text-light small">
+                                            <div class="text-muted small">
                                                 <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class']?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if(is_array($trace['object'])): ?>
                                                     (<?= implode(', ', array_map(function ($v, $k) { return sprintf("%s='%s'", $k, $v); }, $trace['object'], array_keys($trace['object']))); ?>)
                                                 <?php endif; ?>

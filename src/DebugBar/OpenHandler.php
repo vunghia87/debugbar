@@ -173,7 +173,9 @@ class OpenHandler
     protected function monitor($request)
     {
         $request['type'] = 'monitor';
-        $data = $this->get($request);
+        $request['max'] = $request['max'] ?? 50;
+        $request['monitors'] = $this->debugBar->getMonitor();
+        $data = $this->find($request);
         ob_start();
         include __DIR__ . '/Viewer/all.php';
         return ob_get_clean();
