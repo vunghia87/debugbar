@@ -111,11 +111,6 @@ class AdvanceDebugBar extends DebugBar
             set_exception_handler([$this, 'handleError']);
         }
 
-//        /** @var \DebugBar\AdvanceDebugBar $debugbar */
-//        $debugbar = $this;
-//
-//        $this->selectStorage($debugbar);
-
         if ($this->shouldCollect('phpinfo', true)) {
             $this->addCollector(new \DebugBar\DataCollector\PhpInfoCollector());
         }
@@ -212,11 +207,22 @@ class AdvanceDebugBar extends DebugBar
         return $this->enabled ;
     }
 
+    /**
+     * @return string
+     */
+    protected function pathFileCache()
+    {
+        return sys_get_temp_dir() . '/debugBarCache.txt';
+    }
+
+    /**
+     * @return bool
+     */
     protected function isEnableByCache()
     {
-        $fileCache = sys_get_temp_dir() . '/debugBarCache.txt';
+        $fileCache = $this->pathFileCache();
         if (!file_exists($fileCache)) {
-            file_put_contents($fileCache, $this->config['enabled'] ? 1 : 0);
+            file_put_contents($fileCache, 0);
         }
         return file_get_contents($fileCache) == 1;
     }
@@ -224,9 +230,9 @@ class AdvanceDebugBar extends DebugBar
     /**
      * @return bool
      */
-    public function toggle()
+    public function toggleCache()
     {
-        $fileCache = sys_get_temp_dir() . '/debugBarCache.txt';
+        $fileCache = $this->pathFileCache();
         $content = file_get_contents($fileCache);
         file_put_contents($fileCache, !$content);
         return $content;
@@ -283,6 +289,11 @@ class AdvanceDebugBar extends DebugBar
 
     public function modifyResponse()
     {
+        if ($this->shouldCollect('xdebug_trace', false) && extension_loaded('xdebug')) {
+            xdebug_start_trace(null,4);
+            $this->addCollector(new \DebugBar\DataCollector\XdebugTraceCollector());
+        }
+
         ob_start(function ($content) {
             if ($this->shouldCollect('response', false)) {
                 $this->addCollector(new \DebugBar\DataCollector\ResponseCollector($content));

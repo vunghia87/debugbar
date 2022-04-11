@@ -11,15 +11,17 @@
         <?php include 'menu.php' ?>
         <?php include 'control.php' ?>
         <button onclick="collapseAll()" class="btn btn-outline-primary ml-3" title="Collapse">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon fill-primary" fill="none" viewBox="0 0 22 22" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon fill-primary" fill="none" viewBox="0 0 22 22"
+                 stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
             </svg>
         </button>
     </div>
     <div class="container-fluid content mb-5" id="content" data-id="<?= $request['id'] ?>">
         <div class="row">
-            <div class="col-12" id="request">
-                <div class="card">
+            <div class="col-12">
+                <div class="card" id="request">
                     <div class="card-header d-flex align-items-center justify-content-between p-0">
                         <ul class="nav nav-pills">
                             <li class="nav-item"><a href="#" class="nav-link active">Request</a></li>
@@ -56,6 +58,15 @@
                                 <td class="table-fit font-weight-bold">Memory</td>
                                 <td><?= $data['memory']['peak_usage_str'] ?? 0 ?></td>
                             </tr>
+                            <?php if (!empty($data['xdebug_trace']['trace_file'])): ?>
+                                <tr id="trace">
+                                    <td class="table-fit font-weight-bold">XTrace</td>
+                                    <?php $fileXTrace = $data['xdebug_trace']['trace_file'] ?? '' ?>
+                                    <td>
+                                        <a target="_blank" href="?openPhpDebugBar=true&op=xtrace&file=<?= $fileXTrace ?>"><?= $fileXTrace ?></a>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -154,7 +165,8 @@
                                     </a>
                                 </li>
                             </ul>
-                            <input type="text" id="searchQuery" placeholder="insert table ..." class="form-control w-25">
+                            <input type="text" id="searchQuery" placeholder="insert table ..."
+                                   class="form-control w-25">
                         </div>
                         <table class="table table-fixed table-sm mb-0">
                             <thead>
@@ -192,8 +204,12 @@
                                     <td><?= $item['memory_str'] ?? '' ?></td>
                                     <td class="text-right">
                                         <div class="btn-group">
-                                            <button class="btn-query-trace btn btn-sm btn-outline-info text-white">Backtrace</button>
-                                            <button class="btn-code btn btn-sm btn-outline-danger text-white" data-index="<?= $index ?>">Code</button>
+                                            <button class="btn-query-trace btn btn-sm btn-outline-info text-white">
+                                                Backtrace
+                                            </button>
+                                            <button class="btn-code btn btn-sm btn-outline-danger text-white"
+                                                    data-index="<?= $index ?>">Code
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -201,15 +217,19 @@
                                     <td colspan="5">
                                         <ol class="bt">
                                             <?php foreach ($item['backtrace'] ?? [] as $trace) : ?>
-                                            <li>
-                                                <div class="bg-secondary text-light small"> <?= $trace['file'] ?? '' ?>:<?= $trace['line'] ?? '' ?>
-                                                <a target="_blank" href="<?= $trace['editorHref'] ?? '' ?>">#</a></div>
-                                                <div class="text-muted small">
-                                                    <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class']?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if(is_array($trace['object'])): ?>
-                                                    (<?= implode(', ', array_map(function ($v, $k) { return sprintf("%s='%s'", $k, $v); }, $trace['object'], array_keys($trace['object']))); ?>)
-                                                    <?php endif; ?>
-                                                </div>
-                                            </li>
+                                                <li>
+                                                    <div class="bg-secondary text-light small"> <?= $trace['file'] ?? '' ?>
+                                                        :<?= $trace['line'] ?? '' ?>
+                                                        <a target="_blank"
+                                                           href="<?= $trace['editorHref'] ?? '' ?>">#</a></div>
+                                                    <div class="text-muted small">
+                                                        <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class'] ?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if (is_array($trace['object'])): ?>
+                                                            (<?= implode(', ', array_map(function ($v, $k) {
+                                                                return sprintf("%s='%s'", $k, $v);
+                                                            }, $trace['object'], array_keys($trace['object']))); ?>)
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </li>
                                             <?php endforeach; ?>
                                         </ol>
                                     </td>
@@ -233,13 +253,17 @@
                             <?php foreach ($data['messages']['messages'] ?? [] as $index => $item) : ?>
                                 <div class="card-bg-secondary px-3 py-2" style="border-top: 1px solid #120f12">
                                     <div class="d-flex mb-2">
-                                        <div class="text-white p-1 font-weight-bold bg-<?= $item['label'] ?? ''?>">
+                                        <div class="text-white p-1 font-weight-bold bg-<?= $item['label'] ?? '' ?>">
                                             <?= $item['label'] ?? '' ?>
                                         </div>
                                         <div class="ml-auto">
                                             <div class="btn-group">
-                                                <button class="btn-mes-trace btn btn-sm btn-outline-info text-white">Backtrace</button>
-                                                <button class="btn-code btn btn-sm btn-outline-danger text-white" data-index="<?= $index ?>">Code</button>
+                                                <button class="btn-mes-trace btn btn-sm btn-outline-info text-white">
+                                                    Backtrace
+                                                </button>
+                                                <button class="btn-code btn btn-sm btn-outline-danger text-white"
+                                                        data-index="<?= $index ?>">Code
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -253,8 +277,10 @@
                                                 <a target="_blank" href="<?= $trace['editorHref'] ?? '' ?>">#</a>
                                             </div>
                                             <div class="text-muted small">
-                                                <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class']?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if(is_array($trace['object'])): ?>
-                                                    (<?= implode(', ', array_map(function ($v, $k) { return sprintf("%s='%s'", $k, $v); }, $trace['object'], array_keys($trace['object']))); ?>)
+                                                <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class'] ?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if (is_array($trace['object'])): ?>
+                                                    (<?= implode(', ', array_map(function ($v, $k) {
+                                                        return sprintf("%s='%s'", $k, $v);
+                                                    }, $trace['object'], array_keys($trace['object']))); ?>)
                                                 <?php endif; ?>
                                             </div>
                                         </li>
@@ -297,8 +323,12 @@
                                     <td><?= isset($item['timeLife']) ? $item['timeLife'] . ' second' : '' ?></td>
                                     <td class="text-right">
                                         <div class="btn-group">
-                                            <button class="btn-query-trace btn btn-sm btn-outline-info text-white">Backtrace</button>
-                                            <button class="btn-code btn btn-sm btn-outline-danger text-white" data-index="<?= $index ?>">Code</button>
+                                            <button class="btn-query-trace btn btn-sm btn-outline-info text-white">
+                                                Backtrace
+                                            </button>
+                                            <button class="btn-code btn btn-sm btn-outline-danger text-white"
+                                                    data-index="<?= $index ?>">Code
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -309,11 +339,14 @@
                                                 <li>
                                                     <div class="bg-secondary text-light small">
                                                         <?= $trace['file'] ?? '' ?>:<?= $trace['line'] ?? '' ?>
-                                                        <a target="_blank" href="<?= $trace['editorHref'] ?? '' ?>">#</a>
+                                                        <a target="_blank"
+                                                           href="<?= $trace['editorHref'] ?? '' ?>">#</a>
                                                     </div>
                                                     <div class="text-muted small">
-                                                        <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class']?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if(is_array($trace['object'])): ?>
-                                                            (<?= implode(', ', array_map(function ($v, $k) { return sprintf("%s='%s'", $k, $v); }, $trace['object'], array_keys($trace['object']))); ?>)
+                                                        <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class'] ?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if (is_array($trace['object'])): ?>
+                                                            (<?= implode(', ', array_map(function ($v, $k) {
+                                                                return sprintf("%s='%s'", $k, $v);
+                                                            }, $trace['object'], array_keys($trace['object']))); ?>)
                                                         <?php endif; ?>
                                                     </div>
                                                 </li>
@@ -345,8 +378,12 @@
                                         </div>
                                         <div class="ml-auto">
                                             <div class="btn-group">
-                                                <button class="btn-mes-trace btn btn-sm btn-outline-info text-white">Backtrace</button>
-                                                <button class="btn-code btn btn-sm btn-outline-danger text-white" data-index="<?= $index ?>">Code</button>
+                                                <button class="btn-mes-trace btn btn-sm btn-outline-info text-white">
+                                                    Backtrace
+                                                </button>
+                                                <button class="btn-code btn btn-sm btn-outline-danger text-white"
+                                                        data-index="<?= $index ?>">Code
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -367,8 +404,10 @@
                                                 <a target="_blank" href="<?= $trace['editorHref'] ?? '' ?>">#</a>
                                             </div>
                                             <div class="text-muted small">
-                                                <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class']?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if(is_array($trace['object'])): ?>
-                                                    (<?= implode(', ', array_map(function ($v, $k) { return sprintf("%s='%s'", $k, $v); }, $trace['object'], array_keys($trace['object']))); ?>)
+                                                <?= is_object($trace['class'] ?? '') ? get_class($trace['class']) : $trace['class'] ?><?= $trace['type'] ?? '' ?><?= $trace['function'] ?? '' ?><?php if (is_array($trace['object'])): ?>
+                                                    (<?= implode(', ', array_map(function ($v, $k) {
+                                                        return sprintf("%s='%s'", $k, $v);
+                                                    }, $trace['object'], array_keys($trace['object']))); ?>)
                                                 <?php endif; ?>
                                             </div>
                                         </li>

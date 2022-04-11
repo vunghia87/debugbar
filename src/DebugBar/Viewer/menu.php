@@ -3,11 +3,9 @@
         <ul class="nav nav-pills">
             <li class="nav-item"><a href="#request" class="nav-link">Request</a></li>
             <li class="nav-item"><a href="#response" class="nav-link">Response</a></li>
-
             <?php if (!empty($data['auth'])): ?>
                 <li class="nav-item"><a href="#auth" class="nav-link">Auth</a></li>
             <?php endif; ?>
-
             <?php if (!empty($data['exceptions']['count'])): ?>
                 <li class="nav-item">
                     <a href="#exception" class="nav-link">
@@ -41,6 +39,11 @@
                     <a href="#command" class="nav-link">
                         Commmand (<?= $data['command']['count'] ?>)
                     </a>
+                </li>
+            <?php endif; ?>
+            <?php if (!empty($data['xdebug_trace']['trace_file'])): ?>
+                <li class="nav-item">
+                    <a href="#trace" class="nav-link">XTrace</a>
                 </li>
             <?php endif; ?>
         </ul>

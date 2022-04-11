@@ -11,6 +11,7 @@
 namespace DebugBar;
 
 use DebugBar\Dumper\Framer;
+use DebugBar\Supports\XTraceParser;
 
 /**
  * Handler to list and open saved dataset
@@ -50,7 +51,7 @@ class OpenHandler
         }
 
         $op = 'find';
-        $opView = ['all', 'detail', 'frame', 'monitor'];
+        $opView = ['all', 'detail', 'frame', 'monitor', 'xtrace'];
         if (isset($request['op'])) {
             $op = $request['op'];
             if (!in_array($op, array_merge($opView, ['find', 'get', 'clear', 'toggle']))) {
@@ -129,7 +130,7 @@ class OpenHandler
 
     protected function toggle($request)
     {
-        return ['result' => $this->debugBar->toggle()];
+        return ['result' => $this->debugBar->toggleCache()];
     }
 
     protected function frame($request)
@@ -166,7 +167,6 @@ class OpenHandler
             return '';
         }
 
-        //xdump($dataType);
         return new Framer($dataType['backtrace'] ?? []);
     }
 
@@ -179,5 +179,18 @@ class OpenHandler
         ob_start();
         include __DIR__ . '/Viewer/all.php';
         return ob_get_clean();
+    }
+
+    public function xtrace($request)
+    {
+        if (empty($request['file']) && !file_exists($request['file'])) {
+            return '';
+        }
+
+        echo "<style>*{margin: 0;padding: 0;background: #262632}table{font:13px monospace;border: none;background: #262632;color: #b9b5b8} table td{padding:3px 10px;display: inline-block;border:none;} table th{display: none} table td:nth-child(1),table td:nth-child(2),table td:nth-child(3){border-right: 1px solid #fff} table td:nth-child(4){white-space: pre} table td:nth-child(4),table td:nth-child(5){padding: 3px 0} table td:nth-child(6){text-align:right; display: block;background: #707070;color: #fff}</style>";
+        echo file_get_contents($request['file']);
+
+        //implement memory usage
+        //echo include __DIR__ . '/Viewer/xtrace.php';
     }
 }

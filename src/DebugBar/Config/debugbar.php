@@ -108,6 +108,7 @@ return [
         'memcache'        => false, // Show cache by memcache
         'auth'            => false, // get Global auth from session by Partner
         'command'         => true,  // get command execution from binary php
+        'xdebug_trace'    => false, // get file name xdebug trace
     ],
 
     /*
